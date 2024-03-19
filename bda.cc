@@ -9,7 +9,7 @@
 #include "includes.h"
 #include <deque>
 #include <cstring>
-
+#include "cyclichash.h"
 
 using namespace std;
 
@@ -47,8 +47,10 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 
 	}
 	
-	karp_rabin_hashing::init();
+	//karp_rabin_hashing::init();
 	
+	CyclicHash<> hf(k, 19);
+  
 	INT w = ell;
 	INT n = strlen ( (char*) seq );
 	
@@ -56,24 +58,26 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 	INT fp = 0;
         INT smallest_fp = fp;
 
-        INT * FP = ( INT * ) malloc( ( n - k + 1  ) *  sizeof( INT ) );
+        INT * FP = ( INT * ) malloc( ( w  ) *  sizeof( INT ) );
 
         for(INT j = 0; j<k; j++)
-                fp =  karp_rabin_hashing::concat( fp, seq[j] , 1 );
+        	hf.eat(seq[j]);
+                //fp =  karp_rabin_hashing::concat( fp, seq[j] , 1 );
 
-        FP[0] = fp;
+        FP[0] = hf.hashvalue;
         INT pos = 1;
         
         deque<pair<INT,utils::FP_>> min_fp = {};
 	vector<utils::FP_> minimizers;
 	
-        // find all fingerprints for all k substrings
-        for(INT j = 1; j<=n-k; j++)
+        // find all fingerprints for all k substrings in first window
+        for(INT j = 1; j<=w-k; j++)
         {
-                fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
-                fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
+        	hf.reverse_update(seq[j+k-1], seq[j-1]);
+                //fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
+                //fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
 
-                FP[pos] = fp;
+                FP[pos] = hf.hashvalue;
                 pos++;
         }
 
@@ -91,19 +95,19 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
                 min_fp.push_back(std::make_pair(FP[j], potential_bd));
         }
 
-    	
 	/* Compute reduced bd-anchors for every window of size ell */
 	INT i = w - k + 1;
-	for( INT j = 0; j<=n-w; j++ )
+	fp = FP[i];
+	for( INT j = 1; j<=n-w; j++ )
 	{
-		while (!min_fp.empty() && min_fp.back().first > FP[i])
+		while (!min_fp.empty() && min_fp.back().first > fp)
 			min_fp.pop_back();
 
 		utils::FP_ potential_bd;
 		potential_bd.start_pos = i;
 		potential_bd.fp_pos = i;
 				
-		min_fp.push_back(std::make_pair(FP[i], potential_bd));
+		min_fp.push_back(std::make_pair(fp, potential_bd));
 		
 		while( min_fp.front().second.start_pos < i - w + k )
 			min_fp.pop_front();
@@ -119,9 +123,13 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 				break;
 		}
 		
+		
 		i++;
-
-	
+		hf.reverse_update(seq[i], seq[i-k]);
+		
+		//fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
+                //fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
+                
 		/* Filter draws if there are more than one minimum fp, otherwise only one potential bd-anchor in window */			
 		if( minimizers.size() > 1 )
 		{ 	
@@ -149,7 +157,7 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 				else
 				{
 				
-					while ( seq[min_fp_pos+lcp1] == seq[fp_pos+lcp1] )
+					while ( seq[min_fp_pos+lcp1] == seq[fp_pos+lcp1] && lcp1 <= dist_to_end  )
 						lcp1++;
 				}
 
@@ -184,7 +192,7 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 					else
 					{
 					
-						while ( seq[min_fp_pos+lcp2] == seq[fp_pos+lcp2] )
+						while ( seq[min_fp_pos+lcp2] == seq[fp_pos+lcp2] && lcp2 <= dist_to_end )
 							lcp2++;
 					}
 					//	cout<<min_fp_pos<<" "<<fp_pos<<" "<<lcp2<<endl;
@@ -214,7 +222,7 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 						else
 						{
 						
-							while ( seq[min_fp_pos+lcp3] == seq[fp_pos+lcp3] )
+							while ( seq[min_fp_pos+lcp3] == seq[fp_pos+lcp3] && lcp3 <= dist_to_end )
 								lcp3++;
 						}
 						//	cout<<min_fp_pos<<" "<<fp_pos<<" "<<lcp3<<endl;
@@ -245,7 +253,8 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 	}
 	
 	//cout<<"LCE alphabet size "<<lce.alphabet_size()<<endl;
-						
+			
+	free(FP);			
 	return 0;
 }
 

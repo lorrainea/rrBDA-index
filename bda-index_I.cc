@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 	if( argc < 6 )
  	{
         	cout<<"Wrong arguments!\n";
- 		cout<<"./bd-anchors <text_file> <ell> <pattern_file> <output_filename> <index_filename> <lces>\n";
+ 		cout<<"./bd-anchors <text_file> <ell> <pattern_file> <output_filename> <index_filename> <option>\n";
  		exit(-1);
  	}
 
