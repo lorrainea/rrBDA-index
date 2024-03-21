@@ -47,9 +47,9 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 
 	}
 	
-	//karp_rabin_hashing::init();
+	karp_rabin_hashing::init();
 	
-	CyclicHash<> hf(k, 19);
+	//CyclicHash<> hf(k, 4);
   
 	INT w = ell;
 	INT n = strlen ( (char*) seq );
@@ -61,10 +61,10 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
         INT * FP = ( INT * ) malloc( ( w  ) *  sizeof( INT ) );
 
         for(INT j = 0; j<k; j++)
-        	hf.eat(seq[j]);
-                //fp =  karp_rabin_hashing::concat( fp, seq[j] , 1 );
+        	//hf.eat(seq[j]);
+                fp =  karp_rabin_hashing::concat( fp, seq[j] , 1 );
 
-        FP[0] = hf.hashvalue;
+        FP[0] = fp; //hf.hashvalue;
         INT pos = 1;
         
         deque<pair<INT,utils::FP_>> min_fp = {};
@@ -73,11 +73,11 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
         // find all fingerprints for all k substrings in first window
         for(INT j = 1; j<=w-k; j++)
         {
-        	hf.reverse_update(seq[j+k-1], seq[j-1]);
-                //fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
-                //fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
+        	//hf.update(seq[j+k-1], seq[j-1]);
+                fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
+                fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
 
-                FP[pos] = hf.hashvalue;
+                FP[pos] = fp; //hf.hashvalue;
                 pos++;
         }
 
@@ -97,7 +97,11 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 
 	/* Compute reduced bd-anchors for every window of size ell */
 	INT i = w - k + 1;
-	fp = FP[i];
+	//hf.update(seq[i], seq[i-k]);
+	//fp = hf.hashvalue;
+	fp = karp_rabin_hashing::concat( fp, seq[i] , 1 );
+        fp = karp_rabin_hashing::subtract( fp, seq[i-k] , k );
+                
 	for( INT j = 1; j<=n-w; j++ )
 	{
 		while (!min_fp.empty() && min_fp.back().first > fp)
@@ -125,10 +129,10 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 		
 		
 		i++;
-		hf.reverse_update(seq[i], seq[i-k]);
-		
-		//fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
-                //fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
+		//hf.update(seq[i], seq[i-k]);
+		//fp = hf.hashvalue;
+		fp = karp_rabin_hashing::concat( fp, seq[i] , 1 );
+                fp = karp_rabin_hashing::subtract( fp, seq[i-k] , k );
                 
 		/* Filter draws if there are more than one minimum fp, otherwise only one potential bd-anchor in window */			
 		if( minimizers.size() > 1 )
@@ -257,5 +261,4 @@ INT bd_anchors(  unsigned char * seq, string filename, INT ell, INT k, unordered
 	free(FP);			
 	return 0;
 }
-
 
