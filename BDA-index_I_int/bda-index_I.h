@@ -31,10 +31,10 @@ struct Minimizer
  
  
 //INT ssa_lcp(rklce::rk_lce lce, vector<INT> * SSA, vector<INT> * LCP );
-INT bd_anchors( unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * rank);
-INT red_minlexrot( string &X, INT n, INT r);
+INT bd_anchors( unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * rank, INT power );
+INT red_minlexrot( string &X, INT n, INT r, INT power );
 //INT ssa_rk_lce(rklce::rk_lce lce, vector<INT> * ssa_list,  char * sa_index_name, char * lcp_index_name, vector<INT> * SSA, vector<INT> * LCP );
-INT ssa(string seq_filename, vector<INT> * ssa_list , char * sa_index_name, char * lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp );
+INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name,string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable );
 pair<INT,INT> rev_pattern_matching ( string & w, string & a, vector<INT> * SA, vector<INT> * LCP, rmq_succinct_sct<> &rmq, INT n );
 pair<INT,INT> pattern_matching ( string & w, string & a, vector<INT> * SA, vector<INT> * LCP, rmq_succinct_sct<> &rmq, INT n );
 

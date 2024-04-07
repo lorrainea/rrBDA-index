@@ -74,33 +74,6 @@ auto compare(unsigned char * sequence, vector<INT> * A, INT lcp )
 	};
 }
 
-/* SSA and LCP array using SA-RK algorithm */
-/*INT ssa_rk_lce(rklce::rk_lce lce, vector<INT> * ssa_list,  char * sa_index_name, char * lcp_index_name, vector<INT> * SSA, vector<INT> * LCP )
-{
-	cout << "Computing SSA using SA-RK" <<endl;
-
-	std::sort(ssa_list->begin(), ssa_list->end(), lce.lex_less_than());
-	
-	for(INT i = 0; i<ssa_list->size(); i++)
-	{
-		INT lcp = 0;
-		if( i > 0 )
-    			lcp = lce.LCE( ssa_list->at(i-1), ssa_list->at(i) );
-    		SSA->push_back(ssa_list->at(i));
-    		LCP->push_back(lcp);
-	}
-    
-    	ofstream output_ssa(sa_index_name);
-	for(INT i = 0; i<SSA->size(); i++)
-		output_ssa<<SSA->at(i)<<endl;
-
-	ofstream output_lcp(lcp_index_name);
-	for(INT i = 0; i<LCP->size(); i++)
-		output_lcp<<LCP->at(i)<<endl;
-
-return 0;
-}*/
-
 /* Compute the KR fingerprint of sequence[ssa..ssa+l-1] using the FP table -- Time is O(min(l,n/s)), where s is the size of the FP table */
 INT fingerprint( INT ssa, INT * FP, INT fp_len, INT l, unsigned char * sequence, INT text_size, INT power )
 {
@@ -339,7 +312,7 @@ INT order( vector<INT> * final_ssa, vector<INT> * final_lcp, vector<SSA> &B, vec
 }
 
 
-INT ssa(string seq_filename, vector<INT> * ssa_list , char * sa_index_name, char * lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp )
+INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable )
 {
 	INT z = THRESHOLD;
 
@@ -363,7 +336,6 @@ INT ssa(string seq_filename, vector<INT> * ssa_list , char * sa_index_name, char
 	INT text_size=cnt;
 
 
-	INT hash_variable = karp_rabin_hashing::init();
 	INT b = ssa_list->size();
 	cout<<"Number of suffixes b = " << b << endl;
 	

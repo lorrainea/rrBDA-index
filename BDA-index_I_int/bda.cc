@@ -18,10 +18,9 @@ using namespace sdsl;
 #endif
 
 /* Computes the bd-anchors of a string of length n in O(n) time */
-INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * FP )
+INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * FP, INT power)
 {
 
-	cout<<seq<<" k:"<<k<<endl;
 	INT w = ell;
 	INT n = strlen ( (char*) seq );
 	INT fp = 0;
@@ -35,20 +34,14 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 	vector<utils::FP_> minimizers;
 	
         // find all fingerprints for all k substrings
-        for( INT j = 1; j<n; j++)
+        for( INT j = 1; j<=n-k; j++)
         {
                 fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
-                fp = karp_rabin_hashing::subtract( fp, seq[j-1] , k );
+                fp = karp_rabin_hashing::subtract_fast( fp, seq[j-1] , power );
 
                 FP[j] = fp; 
         }
 
-	for( INT j = 0; j<=n-k; j++)
-        {
-               cout<<" fp "<<FP[j]<<" "<<j<<" "<<seq[j]<<endl;
-        } 
-        
-     
    	for ( INT j = 0; j < w - k - 1; j++) 
    	{
  		while ( !min_fp.empty() && FP[j] < min_fp.back().first )
@@ -62,6 +55,7 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 		
     	}
     	
+    	
 	/* Compute reduced bd-anchors for every window of size ell */
 	
 	INT i = w - k - 1;
@@ -70,19 +64,20 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 		
 		while (!min_fp.empty() && min_fp.back().first > FP[i])
 			min_fp.pop_back();
-					
+				
 		utils::FP_ potential_bd;
 		potential_bd.start_pos = i;
 		potential_bd.fp_pos = i;
 				
 		min_fp.push_back(std::make_pair(FP[i], potential_bd));
 		
-	
-		while( min_fp.front().second.start_pos <= i - w + k)
+		cout<<min_fp.size()<<endl;
+    	
+		while( min_fp.front().second.start_pos < i - w + k)
 		{
 			min_fp.pop_front();
 		}	
-		
+		cout<<min_fp.size()<<endl;
 
 		INT min_ = min_fp.at(0).first;
 		for(INT i = 0; i<min_fp.size(); i++)
@@ -116,14 +111,10 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				if( ( (j+ w ) -  min_fp_pos ) < dist_to_end )
 					dist_to_end = ( (j+ w ) -  min_fp_pos );
 				
-				INT min_inv = min( seq[pos+min_fp_pos], seq[pos+fp_pos]) ;
-				
-					
-				INT max_inv = max( seq[pos+min_fp_pos], seq[pos+fp_pos]) ;
-				
+	
 				INT lcp1 = 0; 
 				
-				while ( seq[min_fp_pos+lcp1] == seq[fp_pos+lcp1] )
+				while ( lcp1 <= dist_to_end && seq[min_fp_pos+lcp1] == seq[fp_pos+lcp1] )
 					lcp1++;
 			
 				
@@ -148,13 +139,11 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				
 					if( ( (j+ w ) -  min_fp_pos ) < dist_to_end )
 						dist_to_end = ( (j+ w ) -  min_fp_pos );
-				
-					INT min_inv = min( seq[min_fp_pos], seq[fp_pos]) ;
-					
+	
 						
 					INT lcp2 = 0; 
 				
-					while ( seq[min_fp_pos+lcp2] == seq[fp_pos+lcp2] )
+					while ( lcp2 <= dist_to_end && seq[min_fp_pos+lcp2] == seq[fp_pos+lcp2] )
 						lcp2++;
 				
 					if( lcp2 < dist_to_end )
@@ -167,8 +156,7 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 					}
 					else
 					{
-						
-						
+					
 						
 					 	min_fp_pos = min_fp_pos + min(lcp2,dist_to_end);
 						fp_pos = fp_pos + min(lcp2,dist_to_end);
@@ -179,12 +167,10 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 						if( ( (minimizers.at(i).start_pos) -  min_fp_pos ) < dist_to_end )
 							dist_to_end = ( (minimizers.at(i).start_pos) -  min_fp_pos );
 						
-						INT min_inv = min( seq[pos+min_fp_pos], seq[pos+fp_pos]) ;
-						INT max_inv = max( seq[pos+min_fp_pos], seq[pos+fp_pos]) ;
-						
+	
 						INT lcp3 = 0; 
 						
-						while ( seq[min_fp_pos+lcp3] == seq[fp_pos+lcp3] )
+						while ( lcp3 <= dist_to_end && seq[min_fp_pos+lcp3] == seq[fp_pos+lcp3] )
 							lcp3++;
 						
 						if( lcp3 < dist_to_end )
@@ -201,14 +187,12 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				}
 			}
 			anchors.insert( minimizers.at(minimum).start_pos+pos );
-			cout<<minimizers.at(minimum).start_pos<<" "<<FP[ minimizers.at(minimum).start_pos ]<<endl;
 		
 
 		}
 		else 
 		{
 			anchors.insert( minimizers.at(0).start_pos+pos );
-			cout<<minimizers.at(0).start_pos<<" "<<FP[ minimizers.at(0).start_pos ]<<endl;
 		}
 			
 		

@@ -61,50 +61,50 @@ int main(int argc, char **argv)
 {
 	unordered_set<char> alphabet;
 
-	if( argc < 6 )
+	if( argc < 7 )
  	{
         	cout<<"Wrong arguments!\n";
- 		cout<<"./bd-anchors <text_file> <ell> <pattern_file> <output_filename> <index_filename>\n";
+ 		cout<<"./bd-anchors <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>\n";
  		exit(-1);
  	}
-
-	karp_rabin_hashing::init();
-
- 	ifstream is;
- 	is.open (argv[1], ios::in | ios::binary);
-
- 	std::string str2(argv[2]);
-
- 	ifstream is2;
- 	is2.open (argv[3], ios::in | ios::binary);
-
- 	INT ell;
- 	std::stringstream(str2)>>ell;
+	
+	// Input text file
+ 	ifstream is_text;
+ 	is_text.open (argv[1], ios::in | ios::binary);
  	
- 	char * output_filename; 
- 	output_filename = (char *) malloc(strlen(argv[4])+1);    
-    	strcpy(output_filename,argv[4]);
- 	
- 	char * index_filename; 
- 	index_filename = (char *) malloc(strlen(argv[5])+1);    
-    	strcpy(index_filename,argv[5]);
-    	
-    	ifstream is3;
- 	is3.open (argv[5], ios::in | ios::binary);
-
  	ifstream in_file(argv[1], ios::binary);
    	in_file.seekg(0, ios::end);
    	INT text_file_size = in_file.tellg();
-   
+
+	// Input ell
+ 	std::string str_ell(argv[2]);
+ 	
+ 	INT ell;
+ 	std::stringstream(str_ell)>>ell;
+	
+	// Input block size
+ 	std::string str_block(argv[4]);
+ 	
+ 	INT block;
+ 	std::stringstream(str_block)>>block;
+ 	
+ 	// Input patterns
+ 	ifstream is_patterns;
+ 	is_patterns.open (argv[3], ios::in | ios::binary);
+ 	
+ 	// Input output file
+ 	string output_filename = argv[5]; 
+ 	
+ 	// Input index file
+ 	string index_name = argv[6];
+    	ifstream is_index;
+ 	is_index.open (argv[6], ios::in | ios::binary);
 
     	std::chrono::steady_clock::time_point  start_bd = std::chrono::steady_clock::now();
  	unordered_set<INT> text_anchors;
 	
-	char * index_name =  ( char * ) malloc ( ( strlen( argv[5] ) + 1 ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	const char * bd_anchors_suffix = ".bd";
-	char * bd = strcat(index_name, bd_anchors_suffix);
- 	
+	
+	string bd = index_name + ".bd";
  	
  	ifstream is_bd_anchors;
  	is_bd_anchors.open (bd, ios::in | ios::binary);
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
   	INT text_size = 0;
 	for (INT i = 0; i < text_file_size; i++)
 	{	
-		is.read(reinterpret_cast<char*>(&c), 1);
+		is_text.read(reinterpret_cast<char*>(&c), 1);
 		
 		if( (unsigned char) c == '\n' )
 			continue;
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 		}
 		
 	}
-	is.close();
+	is_text.close();
 	
 	if( text_size < ell )
 	{
@@ -144,6 +144,8 @@ int main(int argc, char **argv)
 		k = 2;
 	
 	
+	INT hash = karp_rabin_hashing::init();
+	INT power = karp_rabin_hashing::pow_mod_mersenne(hash, k, 61);
 	
    	if( file_size > 0 )
 	{
@@ -166,7 +168,6 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		INT block = 100;
 		ifstream is_block;
 	 	is_block.open (argv[1], ios::in | ios::binary);
 		unsigned char * text_block = ( unsigned char * ) malloc (  ( block + 1 ) * sizeof ( unsigned char ) );
@@ -189,7 +190,7 @@ int main(int argc, char **argv)
 				{
 					text_block[count] = '\0';
 					
-					bd_anchors( text_block, pos, ell, k, text_anchors, rank );
+					bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
 					
 					memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
 					memcpy( &text_block[0], &suffix_block[0], ell -1 );
@@ -221,7 +222,6 @@ int main(int argc, char **argv)
 	INT g = text_anchors.size();
 	INT n = text_size;
 	
-
 	std::chrono::steady_clock::time_point  end_bd = std::chrono::steady_clock::now();
 	std::cout <<"bd construction took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_bd - start_bd).count() << "[ms]" << std::endl;
 	cout<<"The text is of length "<< n << ", its alphabet size is "<< alphabet.size()<<", and it has "<<g<<" bd-anchors of order "<<ell<<endl;
@@ -250,10 +250,7 @@ int main(int argc, char **argv)
 	vector<INT> * RSA = new vector<INT>();
 	vector<INT> * RLCP = new vector<INT>();
 	
-	const char * sa_suffix = ".RSA";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	char * sa_index_name = strcat(index_name, sa_suffix);
+	string sa_index_name = index_name + ".RSA";
  	
 	ifstream in_RSA(sa_index_name, ios::binary);
 	in_RSA.seekg (0, in_RSA.end);
@@ -262,10 +259,7 @@ int main(int argc, char **argv)
 	ifstream is_RSA;
  	is_RSA.open (sa_index_name, ios::in | ios::binary);
 	
-	const char * lcp_suffix = ".RLCP";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	char * lcp_index_name = strcat(index_name, lcp_suffix);
+	string lcp_index_name = index_name + ".RLCP";
 	
 	ifstream is_RLCP;
  	is_RLCP.open (lcp_index_name, ios::in | ios::binary);
@@ -282,7 +276,7 @@ int main(int argc, char **argv)
 	
 	if( !(is_RSA) || !(is_RLCP )  )
 	{
-		ssa(argv[1], anchors_vector, sa_index_name, lcp_index_name, RSA, RLCP );
+		ssa(argv[1], anchors_vector, sa_index_name, lcp_index_name, RSA, RLCP, hash );
 	 
 	} 	
 	else 
@@ -343,12 +337,8 @@ int main(int argc, char **argv)
 	vector<INT> * LSA = new vector<INT>();
 	vector<INT> * LLCP = new vector<INT>();
 	
-	char * output_reverse;
-	const char * reversed_text = "_reverse";
-	
-	output_reverse = (char *) malloc(strlen(argv[1])+9);
-	strcpy( output_reverse, argv[1]);
-	strcat(output_reverse, reversed_text);
+	string text_name = argv[1];
+	string output_reverse = text_name + "_reverse";
 		
   	/* We reverse the string for the left direction and also overwrite all other DSs */
   	std::ofstream output_r;
@@ -357,10 +347,7 @@ int main(int argc, char **argv)
   	output_r << text_string;
     	output_r.close();
  
-	sa_suffix = ".LSA";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	sa_index_name = strcat(index_name, sa_suffix);
+	sa_index_name = index_name + ".LSA";
 	
 	ifstream is_LSA;
  	is_LSA.open (sa_index_name, ios::in | ios::binary);
@@ -369,11 +356,7 @@ int main(int argc, char **argv)
 	in_LSA.seekg (0, in_LSA.end);
 	file_size_sa = in_LSA.tellg();
 	
-	
-	lcp_suffix = ".LLCP";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	lcp_index_name = strcat(index_name, lcp_suffix);
+	lcp_index_name = index_name +".LLCP" ;
 	
 	ifstream is_LLCP;
  	is_LLCP.open (lcp_index_name, ios::in | ios::binary);
@@ -391,7 +374,7 @@ int main(int argc, char **argv)
 
 	if ( !(is_LSA) || !(is_LLCP) )
 	{
-		ssa(output_reverse, anchors_vector, sa_index_name, lcp_index_name, LSA, LLCP );
+		ssa(output_reverse, anchors_vector, sa_index_name, lcp_index_name, LSA, LLCP, hash );
 	}
 	
 	else
@@ -448,20 +431,16 @@ int main(int argc, char **argv)
 
   	/* The following RMQ data structures are used for spelling pattern over the LSA and RSA */
   
-	const char * rmq_left_suffix = ".lrmq";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	strcat(index_name, rmq_left_suffix);
+	string rmq_left_suffix = index_name +".lrmq";
   		
-	ifstream in_rmq_left(index_name, ios::binary);
-   
+	ifstream in_rmq_left(rmq_left_suffix, ios::binary);
   	rmq_succinct_sct<> lrmq;
   	
   	
   	if( in_rmq_left )
   	{
   	
-  		load_from_file(lrmq, index_name); 
+  		load_from_file(lrmq, rmq_left_suffix); 
 	}
   	else
   	{
@@ -478,16 +457,13 @@ int main(int argc, char **argv)
 		
 		util::clear(llcp);
 
-		store_to_file(lrmq, index_name);
+		store_to_file(lrmq, rmq_left_suffix);
 	}
 	
 	cout<<"Left RMQ DS constructed "<<endl;
-	const char * rmq_right_suffix = ".rrmq";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	strcat(index_name, rmq_right_suffix);
+	string rmq_right_suffix = index_name+ ".rrmq";
 	
-	ifstream in_rmq_right(index_name, ios::binary);
+	ifstream in_rmq_right(rmq_right_suffix, ios::binary);
   	  
   	int_vector<> rlcp( g , 0 ); // create a vector of length n and initialize it with 0s
   	rmq_succinct_sct<> rrmq;
@@ -495,7 +471,7 @@ int main(int argc, char **argv)
   	if( in_rmq_right )
   	{
 
-  		load_from_file(rrmq, index_name);
+  		load_from_file(rrmq, rmq_right_suffix);
   	}
   	else
   	{
@@ -512,24 +488,20 @@ int main(int argc, char **argv)
 		 
 	  	
 	  	
-	  	store_to_file(rrmq, index_name);
+	  	store_to_file(rrmq, rmq_right_suffix);
 	}	
 	 
 	cout<<"Right RMQ DS constructed "<<endl;
   	//Forming coordinate points using LSA and RSA
 
-	const char * grid_suffix = ".grid";
-	index_name =  ( char * ) malloc (  strlen( argv[5] ) * sizeof ( char ) );
-	strcpy(index_name, argv[5]);
-	strcat(index_name, grid_suffix);
+	string grid_suffix =  index_name+".grid";
   		
-  		
-  	ifstream in_grid(index_name, ios::binary);
+  	ifstream in_grid(grid_suffix, ios::binary);
   	in_grid.seekg (0, in_grid.end);
   	file_size = in_grid.tellg();
   	
   	ifstream is_grid;
- 	is_grid.open (index_name, ios::in | ios::binary);
+ 	is_grid.open (grid_suffix, ios::in | ios::binary);
    	
    	std::vector<point> points;
    	grid construct;
@@ -537,7 +509,7 @@ int main(int argc, char **argv)
  
    	if( file_size > 0 )
   	{  	
-  		load_from_file(construct, index_name);
+  		load_from_file(construct, grid_suffix);
   	}
   	else
   	{
@@ -566,7 +538,7 @@ int main(int argc, char **argv)
 	  		
 		construct.build( points, 0 );
 		
-		store_to_file( construct, index_name );	
+		store_to_file( construct, grid_suffix );	
 	}
 	
 	
@@ -584,7 +556,7 @@ int main(int argc, char **argv)
 	vector<vector<unsigned char> > all_patterns;
     	vector<unsigned char> pattern;
     	c = 0;
-    	while (is2.read(reinterpret_cast<char*>(&c), 1))
+    	while (is_patterns.read(reinterpret_cast<char*>(&c), 1))
     	{
         	if(c == '\n')
         	{
@@ -594,7 +566,7 @@ int main(int argc, char **argv)
         	}
         	else	pattern.push_back((unsigned char)c);
     	}
-    	is2.close();
+    	is_patterns.close();
     	pattern.clear();
 
 	vector<string> new_all_pat;
@@ -614,7 +586,7 @@ int main(int argc, char **argv)
   		}
   		
 		string first_window = pattern.substr(0, ell);
-		INT j = red_minlexrot( first_window, ell, k );
+		INT j = red_minlexrot( first_window, ell, k, power );
 		string left_pattern = pattern.substr(0, j+1);
 	  	reverse(left_pattern.begin(), left_pattern.end());
 	  		

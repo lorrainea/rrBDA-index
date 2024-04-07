@@ -9,16 +9,10 @@
 using namespace std;
 using namespace sdsl;
 
-INT red_minlexrot( string &X, INT n, INT k )
+INT red_minlexrot( string &X, INT n, INT k, INT power )
 {  
-	cout<<X<<" k:"<<k<<endl;
-
-
   	INT fp = 0;
-
-    	
     	vector<INT> * draws = new vector<INT>();
-	
 	
 	for(INT j = 0; j<k; j++)
         	fp =  karp_rabin_hashing::concat( fp, X[j] , 1 );
@@ -27,15 +21,11 @@ INT red_minlexrot( string &X, INT n, INT k )
 	INT smallest_fp = fp;
   	INT smallest_fp_pos = 0;
   	
-  	cout<<"fp "<<fp<<" 0 "<<X[0]<<endl;
-  	
   	for(INT j = 1; j<=n-k; j++)
         {
                 fp = karp_rabin_hashing::concat( fp,  X[j+k-1] , 1 );
-                fp = karp_rabin_hashing::subtract( fp, X[j-1] , k );
+                fp = karp_rabin_hashing::subtract_fast( fp, X[j-1] , power );
 
-		cout<<"fp "<<fp<<" "<<j<<" "<<X[j]<<endl;
-		
                 if( fp < smallest_fp )
                 {
                 	draws->clear();
@@ -53,50 +43,83 @@ INT red_minlexrot( string &X, INT n, INT k )
        
         }
         
-        if( draws->size() > 1 )
+   
+		
+ 	if( draws->size() > 1 )
         {
-        
-        	unsigned char * XX = ( unsigned char * ) malloc (  ( 2*n + 1 ) * sizeof ( unsigned char ) );
-	
-		for(INT i = 0; i<n; i++)
-		{
-			XX[i] = X[i];
-			XX[i+n] = X[i];
-		}
-	
        		smallest_fp_pos = draws->at(0);
+       		
         	for(INT i = 1; i<draws->size(); i++ )
         	{
-        		for(INT j = k; j<=n; j++)
+        		INT a_pos = smallest_fp_pos+k;
+        		INT b_pos = draws->at(i)+k;
+        		
+        		for(INT j = k; j<n; j++)
         		{
-        			INT next_smallest_fp_pos = draws->at(i);
-        			
-        			char a = XX[smallest_fp_pos+j];
-        			char b = XX[next_smallest_fp_pos+j];
-        			
-        			
-        			if( a < b )
-        			{
-        				smallest_fp_pos = draws->at(0);
-        				break;
-        			}
-        			else if( a > b )
+ 
+        			char a = X[a_pos];
+        			char b = X[b_pos];
+
+				if( a_pos >=n )
+				{
+					a_pos = 0;
+					break;
+				}
+					
+				if( b_pos >= n )
+				{
+					b_pos = 0;
+					break;
+				}
+				
+        			if( b < a )
         			{
         				smallest_fp_pos =  draws->at(i);
+        				
         				break;
         			}
+        			
+        			a_pos++;
+        			b_pos++;
     
         		}
         		
+        		for(INT j = 0; j<n; j++)
+        		{
+       
+        			char a = X[a_pos];
+        			char b = X[b_pos];
+        			
+        			if( a_pos >=n )
+				{
+					break;
+				}
+					
+				if( b_pos >= n )
+				{
+					smallest_fp_pos =  draws->at(i);
+					
+					break;
+				}
+        			
+        			if( b < a )
+        			{
+        				smallest_fp_pos =  draws->at(i);
+        				
+        				break;
+        			}
+        			
+        			a_pos++;
+        			b_pos++;
+    
+        		}
+        		
+        		
         	}
-        	
-        	free( XX );
+        
         }
         
-        cout<<smallest_fp_pos<<endl;
-        
         delete( draws );
-       
    	return smallest_fp_pos;
 }
 
