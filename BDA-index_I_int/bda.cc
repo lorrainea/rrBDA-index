@@ -70,14 +70,9 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 		potential_bd.fp_pos = i;
 				
 		min_fp.push_back(std::make_pair(FP[i], potential_bd));
-		
-		cout<<min_fp.size()<<endl;
-    	
+	
 		while( min_fp.front().second.start_pos < i - w + k)
-		{
 			min_fp.pop_front();
-		}	
-		cout<<min_fp.size()<<endl;
 
 		INT min_ = min_fp.at(0).first;
 		for(INT i = 0; i<min_fp.size(); i++)
