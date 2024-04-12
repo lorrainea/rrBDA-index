@@ -1,0 +1,40 @@
+MF=     Makefile.64-bit.gcc
+ 
+CC=     g++
+ 
+CFLAGS= -D_USE_64 -msse3 -O3 -g -fomit-frame-pointer -funroll-loops 
+ 
+LFLAGS= -std=c++17 -O3 -fconcepts -DNDEBUG -I ./libsdsl/include/ -I ./include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 -Wl,-rpath=$(PWD)/libsdsl/lib
+
+EXE=    rbda-index_I
+ 
+SRC=    rbda-index_I.cc rbda.cc ssa.cc pattern-matching.cc krfp.cc utils.cc utils_krfp.cc
+
+HD=     rbda-index_I.h Makefile.64-bit.gcc
+ 
+# 
+# No need to edit below this line 
+# 
+ 
+.SUFFIXES: 
+.SUFFIXES: .cc .o 
+ 
+OBJ=    $(SRC:.cc=.o) 
+ 
+.cc.o: 
+	$(CC) $(CFLAGS)-c $(LFLAGS) $< 
+ 
+all:    $(EXE) 
+ 
+$(EXE): $(OBJ) 
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LFLAGS) 
+ 
+$(OBJ): $(MF) $(HD) 
+ 
+clean: 
+	rm -f $(OBJ) $(EXE) *~
+
+clean-all: 
+	rm -f $(OBJ) $(EXE) *~
+	rm -r libsdsl
+	rm -r sdsl-lite
