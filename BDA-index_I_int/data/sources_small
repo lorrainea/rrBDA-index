@@ -1,1 +1,0 @@
-{structrtl8169_private*tp=netdev_priv(dev);structtimer_list*timer=&tp->timer;if((tp->mac_version<=RTL_GIGA_MAC_VER_B)||(tp->phy_version>=RTL_GIGA_PHY_VER_H))return;del_timer_sync

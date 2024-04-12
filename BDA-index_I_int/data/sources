@@ -1,1 +1,0 @@
-(tp->phy_version>=RTL_GIGA_PHY_VER_H))return;del_timer_sync(
