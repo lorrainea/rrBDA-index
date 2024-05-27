@@ -31,7 +31,7 @@
 #include <numeric>
 #include <sstream>
 #include "krfp.h"
-#include "rbda-index_I.h"
+#include "rrbda-index_I.h"
 #include "unordered_dense.h"
 
 #define IPS4 false

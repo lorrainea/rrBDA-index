@@ -6,11 +6,11 @@ CFLAGS= -D_USE_64 -msse3 -O3 -g -fomit-frame-pointer -funroll-loops
  
 LFLAGS= -std=c++17 -O3 -fconcepts -DNDEBUG -I ./libsdsl/include/ -I ./include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 -Wl,-rpath=$(PWD)/libsdsl/lib
 
-EXE=    rbda-index_II
+EXE=    rrbda-index_II
  
-SRC=    rbda-index_II.cc rbda.cc ssa.cc pattern-matching.cc krfp.cc utils.cc utils_krfp.cc
+SRC=    rrbda-index_II.cc rrbda.cc ssa.cc pattern-matching.cc krfp.cc utils.cc utils_krfp.cc
 
-HD=     rbda-index_II.h Makefile.64-bit.gcc
+HD=     rrbda-index_II.h Makefile.64-bit.gcc
  
 # 
 # No need to edit below this line 

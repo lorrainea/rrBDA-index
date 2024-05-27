@@ -1,7 +1,7 @@
-rBDA-index_I_int, rBDA-index_II_int, rBDA-index_I_ext and rBDA-index_II_ext
+rrBDA-index_I_int, rrBDA-index_II_int, rrBDA-index_I_ext and rrBDA-index_II_ext
 ===
 
-<b>Installation</b>: To install and compile BDA-index_I or BDA-index_II, read the INSTALL file within the BDA-index_I_int, BDA-index_II_int, BDA-index_I_ext or BDA-index_II_ext folders.
+<b>Installation</b>: To install and compile rrBDA-index_I or rrBDA-index_II, read the INSTALL file within the rrBDA-index_I_int, rrBDA-index_II_int, rrBDA-index_I_ext or rrBDA-index_II_ext folders.
 
 <b>INPUT</b>: A file containing a single text and a file containing a set of patterns seperated by a new line.
 
@@ -10,17 +10,17 @@ rBDA-index_I_int, rBDA-index_II_int, rBDA-index_I_ext and rBDA-index_II_ext
 
 ```
 Usage: 
-rBDA-index_I_int
-./rbda-index_I <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>
+rrBDA-index_I_int
+./rrbda-index_I <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>
 
-rBDA-index_II_int
-./rbda-index_II <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>
+rrBDA-index_II_int
+./rrbda-index_II <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>
 
-rBDA-index_I_ext
-./rbda-index_I <text_file> <ell> <pattern_file> <block_size> <ram_use> <output_filename> <index_filename>
+rrBDA-index_I_ext
+./rrbda-index_I <text_file> <ell> <pattern_file> <block_size> <ram_use> <output_filename> <index_filename>
 
-rBDA-index_II_ext
-./rbda-index_II <text_file> <ell> <pattern_file> <block_size> <ram_use> <output_filename> <index_filename>
+rrBDA-index_II_ext
+./rrbda-index_II <text_file> <ell> <pattern_file> <block_size> <ram_use> <output_filename> <index_filename>
 
 
 <text_file> - name of input text file
@@ -34,15 +34,15 @@ rBDA-index_II_ext
 
 <b>Examples</b>
 ```
-rBDA-index_I_int
- $ ./rbda-index_I ./data/text 3 ./data/patterns 10 out 150 index
+rrBDA-index_I_int
+ $ ./rrbda-index_I ./data/text 3 ./data/patterns 10 out 150 index
 
-rBDA-index_II_int
- $ ./rbda-index_II ./data/text 3 ./data/patterns 10 out 150 index
+rrBDA-index_II_int
+ $ ./rrbda-index_II ./data/text 3 ./data/patterns 10 out 150 index
  
-rBDA-index_I_ext
- $ ./rbda-index_I ./data/text 3 ./data/patterns 10 2000 out 150 index
+rrBDA-index_I_ext
+ $ ./rrbda-index_I ./data/text 3 ./data/patterns 10 2000 out 150 index
 
-rBDA-index_II_ext
- $ ./rbda-index_II ./data/text 3 ./data/patterns 10 2000 out 150 index
+rrBDA-index_II_ext
+ $ ./rrbda-index_II ./data/text 3 ./data/patterns 10 2000 out 150 index
 ```
