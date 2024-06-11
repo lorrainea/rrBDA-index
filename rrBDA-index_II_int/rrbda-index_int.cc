@@ -21,7 +21,7 @@
 #include "stream.h"
 #include "uint40.h"
 #include <math.h>
-#include "rrbda-index_II.h"
+#include "rrbda-index_int.h"
 #include <sdsl/bit_vectors.hpp>                                   // include header for bit vectors
 #include <sdsl/rmq_support.hpp>	
 #include <sdsl/io.hpp>
@@ -36,6 +36,23 @@
 #endif
 
 double vm, vm0, rss, rss0;
+
+void reverse( unsigned char * &s)
+{
+	INT length = strlen( (char*) s ) ;
+	
+	unsigned char temp = ' ';
+	INT i = 0, j = length-1;
+	
+	while( i < j )
+	{
+		temp = s[j];
+		s[j] = s[i];
+		s[i] = temp;
+		
+		i++, j--;
+	}
+}
 
 void process_mem_usage(double& vm_usage, double& resident_set)
 {
@@ -69,7 +86,7 @@ bool sort_sa(const pair<INT,INT> &a,const pair<INT,INT> &b)
 
 int main(int argc, char **argv)
 {
-	unordered_set<char> alphabet;
+	unordered_set<unsigned char> alphabet;
 
 	if( argc < 7 )
  	{
@@ -113,19 +130,7 @@ int main(int argc, char **argv)
     	std::chrono::steady_clock::time_point  start_bd = std::chrono::steady_clock::now();
  	unordered_set<INT> text_anchors;
 	
-	
-	string bd = index_name + ".bd";
- 	
- 	ifstream is_bd_anchors;
- 	is_bd_anchors.open (bd, ios::in | ios::binary);
- 	
-	ifstream in_bd_anchors(bd, ios::binary);
- 	in_bd_anchors.seekg (0, in_bd_anchors.end);
-   	INT file_size = in_bd_anchors.tellg();
-   	string bd_anchor = "";
-   	INT bd_anchor_int = 0;
-   	
-   	char c = 0;
+   	unsigned char c = 0;
   	INT text_size = 0;
 	for (INT i = 0; i < text_file_size; i++)
 	{	
@@ -163,87 +168,53 @@ int main(int argc, char **argv)
 	INT hash = karp_rabin_hashing::init();
 	INT power = karp_rabin_hashing::pow_mod_mersenne(hash, k, 61);
 	
-   	if( file_size > 0 )
-	{
-		// Read in from .bd file
-	    	c = 0;
-		for (INT i = 0; i < file_size; i++)
-		{	
-			is_bd_anchors.read(reinterpret_cast<char*>(&c), 1);
+   	ifstream is_block;
+	is_block.open (argv[1], ios::in | ios::binary);
+	unsigned char * text_block = ( unsigned char * ) malloc (  ( block + 1 ) * sizeof ( unsigned char ) );
+	INT * rank = ( INT * ) malloc( ( block  ) *  sizeof( INT ) );
+	unsigned char * suffix_block = ( unsigned char * ) malloc (  ( ell  ) * sizeof ( unsigned char ) );
 		
-			if( (unsigned char) c == '\n' )
-			{
-				bd_anchor_int = stoi( bd_anchor );
-				text_anchors.insert( bd_anchor_int );
-				bd_anchor = "";
-			}
-			else bd_anchor += (unsigned char) c;
-			
-		}
-		is_bd_anchors.close();
-	}
-	else
-	{
-		ifstream is_block;
-	 	is_block.open (argv[1], ios::in | ios::binary);
-		unsigned char * text_block = ( unsigned char * ) malloc (  ( block + 1 ) * sizeof ( unsigned char ) );
-		INT * rank = ( INT * ) malloc( ( block  ) *  sizeof( INT ) );
-		unsigned char * suffix_block = ( unsigned char * ) malloc (  ( ell  ) * sizeof ( unsigned char ) );
-		
-	 	c = 0;
-	 	INT count = 0;
-	 	INT pos = 0;
+	c = 0;
+	INT count = 0;
+	INT pos = 0;
 	 	
-		for (INT i = 0; i < text_size; i++)
-		{	
-			is_block.read(reinterpret_cast<char*>(&c), 1);
+	for (INT i = 0; i < text_size; i++)
+	{	
+		is_block.read(reinterpret_cast<char*>(&c), 1);
 			
-			if( (unsigned char) c != '\n' )
+		if( (unsigned char) c != '\n' )
+		{
+			text_block[count] = (unsigned char) c ;
+			count++;
+			if( count == block || i == text_size - 1 )
 			{
-				text_block[count] = (unsigned char) c ;
-				count++;
-				if( count == block || i == text_size - 1 )
-				{
-					text_block[count] = '\0';
+				text_block[count] = '\0';
 					
-					bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
+				bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
 					
-					memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
-					memcpy( &text_block[0], &suffix_block[0], ell -1 );
+				memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
+				memcpy( &text_block[0], &suffix_block[0], ell -1 );
 					
-					pos = pos + ( block - ell + 1 );
-					count = ell - 1;
-					
-					
-				}
+				pos = pos + ( block - ell + 1 );
+				count = ell - 1;	
 			}
-			
 		}
-		
-		ofstream bd_output;
-		bd_output.open(bd);
-			
-		for (auto &anchor : text_anchors)	
-			bd_output<<anchor<<endl;
-				
-		bd_output.close();
-		
-		is_block.close();
-		free( text_block );
-		free( suffix_block );
-		free( rank );	
-		
 	}
-			
+		
+	is_block.close();
+	free( text_block );
+	free( suffix_block );
+	free( rank );	
+		
 	INT g = text_anchors.size();
 	INT n = text_size;
 	
 	std::chrono::steady_clock::time_point  end_bd = std::chrono::steady_clock::now();
-	std::cout <<"bd construction took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_bd - start_bd).count() << "[ms]" << std::endl;
+	std::cout <<"bd construction took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_bd - start_bd).count() << " [ms]" << std::endl;
 	cout<<"The text is of length "<< n << ", its alphabet size is "<< alphabet.size()<<", and it has "<<g<<" bd-anchors of order "<<ell<<endl;
 	cout<<"The density is "<<(double) g / text_size<<endl;
 	
-	string text_string = "";
+	unsigned char * text_string = ( unsigned char * ) malloc (  ( text_size + 1 ) * sizeof ( unsigned char ) );
 	ifstream is_full;
  	is_full.open (argv[1], ios::in | ios::binary);
  	
@@ -251,11 +222,7 @@ int main(int argc, char **argv)
 	for (INT i = 0; i < text_size; i++)
 	{	
 		is_full.read(reinterpret_cast<char*>(&c), 1);
-		
-		if( (unsigned char) c == '\n'  )
-			continue;
-			
-		else text_string.push_back( (unsigned char) c );
+		text_string[i] = (unsigned char) c;
 	}
 	is_full.close();
 	
@@ -292,7 +259,7 @@ int main(int argc, char **argv)
 	
 	if( !(is_RSA) || !(is_RLCP )  )
 	{
-		ssa(argv[1], anchors_vector, sa_index_name, lcp_index_name, RSA, RLCP, hash );
+		ssa(text_string, anchors_vector, sa_index_name, lcp_index_name, RSA, RLCP, hash );
 	 
 	} 	
 	else 
@@ -353,18 +320,10 @@ int main(int argc, char **argv)
 	vector<INT> * LSA = new vector<INT>();
 	vector<INT> * LLCP = new vector<INT>();
 	
-	string text_name = argv[1];
-	string output_reverse = text_name + "_reverse";
-		
   	/* We reverse the string for the left direction and also overwrite all other DSs */
-  	std::ofstream output_r;
-  	output_r.open (output_reverse);
-  	reverse(text_string.begin(), text_string.end());
-  	output_r << text_string;
-    	output_r.close();
- 
+  	reverse(text_string);
+  	
 	sa_index_name = index_name + ".LSA";
-	
 	ifstream is_LSA;
  	is_LSA.open (sa_index_name, ios::in | ios::binary);
  	
@@ -390,7 +349,7 @@ int main(int argc, char **argv)
 
 	if ( !(is_LSA) || !(is_LLCP) )
 	{
-		ssa(output_reverse, anchors_vector, sa_index_name, lcp_index_name, LSA, LLCP, hash );
+		ssa(text_string, anchors_vector, sa_index_name, lcp_index_name, LSA, LLCP, hash );
 	}
 	
 	else
@@ -509,111 +468,173 @@ int main(int argc, char **argv)
 	 
 	cout<<"Right RMQ DS constructed "<<endl;
   	cout<<"The whole index is constructed"<<endl;
-	
+	reverse( text_string );
 	std::chrono::steady_clock::time_point  end_index = std::chrono::steady_clock::now();
-	std::cout <<"Index took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_index- start_index).count() << "[ms]" << std::endl;
+	std::cout <<"Index construction took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_index- start_index + end_bd - start_bd).count() << " [ms]" << std::endl;
 
-  	vector<vector<unsigned char> > all_patterns;
-    	vector<unsigned char> pattern;
-    	c = 0;
-    	while (is_patterns.read(reinterpret_cast<char*>(&c), 1))
-    	{
-        	if(c == '\n')
-        	{
-  			if(pattern.empty())	break;
-  			all_patterns.push_back(pattern);
-  			pattern.clear();
-        	}
-        	else	pattern.push_back((unsigned char)c);
-    	}
-    	is_patterns.close();
-    	pattern.clear();
+	std::chrono::steady_clock::time_point  begin_pt = std::chrono::steady_clock::now();
+  	INT num_seqs = 0;           // the total number of patterns considered
+	INT max_len_pattern = 0;
+	INT ALLOC_SIZE = 180224;
+	INT seq_len = 0;
+	INT max_alloc_seq_len = 0;
+	INT max_alloc_seqs = 0;
+	unsigned char ** patterns = NULL;
+	
+	while ( is_patterns.read(reinterpret_cast<char*>(&c), 1) )
+	{
+		if( num_seqs >= max_alloc_seqs )
+		{
+			patterns = ( unsigned char ** ) realloc ( patterns,   ( max_alloc_seqs + ALLOC_SIZE ) * sizeof ( unsigned char* ) );
+			patterns[ num_seqs ] = NULL;
+			
+			max_alloc_seqs += ALLOC_SIZE;
+		}
+		
+		if( seq_len != 0 && c == '\n' )
+		{
+			patterns[ num_seqs ][ seq_len ] = '\0';
+			
+			num_seqs++;
 
-	vector<string> new_all_pat;
-	for(auto &it_pat : all_patterns)	new_all_pat.push_back(string(it_pat.begin(), it_pat.end()));
-	all_patterns.clear();
+			if( seq_len > max_len_pattern)
+				max_len_pattern = seq_len;
+			
+			seq_len = 0;
+			max_alloc_seq_len = 0;
+			
+			patterns[ num_seqs ] = NULL;
+		}
+		else 
+		{
+			if ( seq_len >= max_alloc_seq_len )
+			{
+				patterns[ num_seqs ] = ( unsigned char * ) realloc ( patterns[ num_seqs ],   ( max_alloc_seq_len + ALLOC_SIZE ) * sizeof ( unsigned char ) );
+				max_alloc_seq_len += ALLOC_SIZE;
+			}
+			
+			patterns[ num_seqs ][ seq_len ] = (unsigned char) c;	
+			seq_len++;	
+		}
+	} 
+	is_patterns.close();
 	
-  	std::chrono::steady_clock::time_point  begin_pt = std::chrono::steady_clock::now();
-    	reverse(text_string.begin(), text_string.end()); 				//I re-reverse to take the original string
-	
+	INT *f = new INT[ell<<1];
   	ofstream pattern_output;
 	pattern_output.open(output_filename);
-	for(auto &pattern : new_all_pat)
+	
+	unsigned char * left_pattern = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+	unsigned char * first_window = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+	unsigned char * right_pattern = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+			
+	INT hits = 0;
+	for(INT i = 0; i<num_seqs; i++)
    	{
+ 		INT pattern_size = strlen( (char*) patterns[i] );
    	
-  		if ( pattern.size() < ell )
+  		if ( pattern_size < ell )
   		{
-  			pattern_output<<"Pattern skipped: its length is less than ell!\n";
+  			pattern_output<< patterns[i] << " skipped: its length is less than ell!\n";
   			continue;
   		}
 		
-		string first_window = pattern.substr(0, ell).c_str();
+		memcpy( &first_window[0], &patterns[i][0], ell );
+		first_window[ell] = '\0';
+		
   		INT j = red_minlexrot( first_window, ell, k, power );
   		
-		if ( pattern.size() - j >= j ) //if the right part is bigger than the left part, then search the right part to get a smaller interval on RSA (on average)
+		if ( pattern_size - j >= j ) //if the right part is bigger than the left part, then search the right part to get a smaller interval on RSA (on average)
 		{ 
-  			string right_pattern = pattern.substr(j, pattern.size()-j);
-			pair<INT,INT> right_interval = pattern_matching ( right_pattern, text_string, RSA, RLCP, rrmq, g );
-  														
+			
+			INT right_pattern_size = pattern_size-j;
+			memcpy( &right_pattern[0], &patterns[i][j], pattern_size-j );
+			right_pattern[pattern_size - j] = '\0';
+			
+			pair<INT,INT> right_interval = pattern_matching ( right_pattern, text_string, RSA, RLCP, rrmq, g, right_pattern_size, text_size );
+  												
 
 			if(right_interval.first > right_interval.second)
-			{	
-				pattern_output<<"No occurrences found!\n";
-				continue;
-			}
-		
-			for(INT i = right_interval.first; i <= right_interval.second; i++ ) //this can be a large interval and only one occurrence is valid.
 			{
-				INT index = RSA->at(i);
+  				pattern_output<< patterns[i] << " was not found in the text!\n";
+				continue;
+			}	
+		
+			for(INT t = right_interval.first; t <= right_interval.second; t++ ) //this can be a large interval and only one occurrence is valid.
+			{
+				INT index = RSA->at(t);
 				INT jj = j;		//this is the index of the anchor in the pattern
 				index--; 	jj--;	//jump the index of the anchor and start looking on the left
-				while ( ( jj >= 0 ) && ( index >= 0 ) && ( text_string[index] == pattern[jj] ) )
+				while ( ( jj >= 0 ) && ( index >= 0 ) && ( text_string[index] == patterns[i][jj] ) )
 				{
 					index--; jj--;
 				}
 				if ( jj < 0 ) //we have matched the pattern completely
 				{
-					pattern_output<< pattern <<" found at position "<< index + 1 << " of the text"<<endl;
+					pattern_output<< patterns[i] <<" found at position "<< index + 1 << " of the text"<<endl;
+					hits++;
 				}					
+				else	pattern_output<< patterns[i] << " was not found in the text!\n";
 			}
 		}
 		else //otherwise, search the left part to get a smaller interval on LSA (on average)
 		{ 
-			string left_pattern = pattern.substr(0, j+1);
-			reverse(left_pattern.begin(), left_pattern.end());
-			pair<INT,INT> left_interval = rev_pattern_matching ( left_pattern, text_string, LSA, LLCP, lrmq, g );
-  														
-			if(left_interval.first > left_interval.second)
+			INT s = 0;
+			INT left_pattern_size  = j+1;
+			for(INT a = j; a>=0; a--)
 			{
-				pattern_output<<"No occurrences found!\n";
+				left_pattern[s] = patterns[i][a];
+				s++;
+			}
+			left_pattern[j+1] = '\0';
+			
+			
+			pair<INT,INT> left_interval = rev_pattern_matching ( left_pattern, text_string, LSA, LLCP, lrmq, g, left_pattern_size, text_size );
+  														
+			if(left_interval.first > left_interval.second)	
+			{
+  				pattern_output<< patterns[i] << " was not found in the text!\n";
 				continue;
 			}
-		
-			for(INT i = left_interval.first; i <= left_interval.second; i++ ) //this can be a large interval and only one occurrence is valid.
+			for(INT t = left_interval.first; t <= left_interval.second; t++ ) //this can be a large interval and only one occurrence is valid.
 			{
-				INT index = n-1-LSA->at(i);
+				INT index = n-1-LSA->at(t);
 				INT jj = j;		//this is the index of the anchor in the pattern
 				index++; 	jj++;	//jump the index of the anchor and start looking on the right
-				while ( ( jj < pattern.size() ) && ( index < n ) && ( text_string[index] == pattern[jj] ) )
+				while ( ( jj < pattern_size ) && ( index < n ) && ( text_string[index] == patterns[i][jj] ) )
 				{
 					index++; jj++;
 				}
-				if ( jj == pattern.size() ) //we have matched the pattern completely
+				if ( jj == pattern_size ) //we have matched the pattern completely
 				{ 
-					if ( index == n - 1 )	pattern_output<< pattern <<" found at position "<< index - pattern.size() + 1 << " of the text"<<endl;					
-					else			pattern_output<< pattern <<" found at position "<<  index - pattern.size() << " of the text"<<endl;
+					if ( index == n - 1 )	
+						pattern_output<< patterns[i] <<" found at position "<< index - pattern_size + 1 << " of the text"<<endl;					
+					else			
+						
+						pattern_output<< patterns[i] <<" found at position "<<  index - pattern_size << " of the text"<<endl;
+					hits++;
 				}
+				else	pattern_output<< patterns[i] << " was not found in the text!\n";
 			}
 			
-		}		
+		}
+	
    	}
  	
-	std::chrono::steady_clock::time_point  end_pt = std::chrono::steady_clock::now();
-	std::cout <<"Pattern matching took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_pt - begin_pt).count() << "[ms]" << std::endl;
-  	free ( RSA );
+ 	std::chrono::steady_clock::time_point  end_pt = std::chrono::steady_clock::now();
+	std::cout <<"Pattern matching took " << std::chrono::duration_cast<std::chrono::milliseconds>(end_pt - begin_pt).count() << " [ms]" << std::endl;
+	std::cout <<"Occurrences: "<< hits <<endl;
+  	
+	for( INT i = 0; i < num_seqs; i ++ )
+        	free (patterns[i]);
+        free (patterns);
+	free ( RSA );
   	free ( RLCP );
   	free ( LSA );
   	free ( LLCP );
+  	free( left_pattern );
+  	free( first_window );
+  	free( right_pattern );
+  	free( text_string );
 
 	return 0;
 }

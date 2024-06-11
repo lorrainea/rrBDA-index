@@ -21,7 +21,7 @@
 #include "stream.h"
 #include "uint40.h"
 #include <math.h>
-#include "rrbda-index_II.h"
+#include "rrbda-index_int.h"
 #include "krfp.h"
 
 using namespace std;

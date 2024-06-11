@@ -1,20 +1,10 @@
-rrBDA-index: Text Indexing for Long Patterns using Reduced Randomized Anchors
+rrBDA-index ext
 ===
-
 
 How to use
 ----------
-<b>INPUT</b>: A file containing a single text and a file containing a set of patterns seperated by a new line.
-
-<b>OUTPUT</b>: A file containing the set of patterns and the starting position of their occurrences within the text.
 
 ### Installation
-
-```
-cd rrBDA-index_int
-./pre-install.sh
-make -f Makefile.32-bit.gc
-```
 
 ```
 cd rrBDA-index_ext
@@ -25,7 +15,6 @@ make -f Makefile.32-bit.gc
 ### Usage
 
 ```
-./rrbda-index_int <text_file> <ell> <pattern_file> <output_filename> <block_size> <index_filename>
 ./rrbda-index_ext <text_file> <ell> <pattern_file> <output_filename> <ram_use> <block_size> <index_filename>
 
 <text_file> - name of input text file.
@@ -40,6 +29,5 @@ make -f Makefile.32-bit.gc
 ### Examples
 
 ```
- $ ./bda-index_int ./data/text 3 ./data/patterns out 10 index
- $ ./bda-index_ext ./data/text 3 ./data/patterns out 1024 10 index
+ $ ./rrbda-index_ext ./data/text 3 ./data/patterns out 1024 10 index
 ```

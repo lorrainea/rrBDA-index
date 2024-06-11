@@ -1,5 +1,5 @@
 /**
-    rrBDA-index_II_int: Randomized Reduced Bi-directional Anchors (using internal memory)
+    rrBDA-index_II_ext: Randomized Reduced Bi-directional Anchors (using external memory)
     Copyright (C) 2024 Lorraine A. K. Ayad, Grigorios Loukides, Solon P. Pissis
 
     This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
-
 
 #include <cstdio>
 #include <cstdlib>
@@ -33,11 +32,12 @@ typedef int64_t INT;
 typedef int32_t INT;
 #endif
 
+
 using namespace sdsl;
 using namespace std;
  
 INT bd_anchors( unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * rank, INT power );
-INT red_minlexrot( string &X, INT n, INT r, INT power );
-INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name,string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable );
-pair<INT,INT> rev_pattern_matching ( string & w, string & a, vector<INT> * SA, vector<INT> * LCP, rmq_succinct_sct<> &rmq, INT n );
-pair<INT,INT> pattern_matching ( string & w, string & a, vector<INT> * SA, vector<INT> * LCP, rmq_succinct_sct<> &rmq, INT n );
+INT red_minlexrot( unsigned char * X, INT n, INT r, INT power );
+pair<INT,INT> rev_pattern_matching ( unsigned char * w, unsigned char * a, INT * SA, INT * LCP, rmq_succinct_sct<> &rmq, INT n, INT w_size, INT a_size );
+pair<INT,INT> pattern_matching ( unsigned char * w, unsigned char * a, INT * SA, INT * LCP, rmq_succinct_sct<> &rmq, INT n, INT w_size, INT a_size );
+

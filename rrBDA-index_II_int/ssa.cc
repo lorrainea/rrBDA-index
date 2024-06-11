@@ -31,7 +31,7 @@
 #include <numeric>
 #include <sstream>
 #include "krfp.h"
-#include "rrbda-index_II.h"
+#include "rrbda-index_int.h"
 #include "unordered_dense.h"
 
 #define IPS4 false
@@ -312,29 +312,10 @@ INT order( vector<INT> * final_ssa, vector<INT> * final_lcp, vector<SSA> &B, vec
 }
 
 
-INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable )
+INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable )
 {
 	INT z = THRESHOLD;
-
-	/* Read in sequence file */
-	ifstream seq(seq_filename, ios::in | ios::binary);
-
-	char c;
-  	
-  	unsigned char *input_seq_char=NULL;  	
-  	INT cnt=0;
-  	while (seq.get(c))     
-  	{
-  		if(cnt==0 || cnt%1048576)
-  			input_seq_char = ( unsigned char * ) realloc ( input_seq_char,   ( cnt + 1048576 ) * sizeof ( unsigned char ) );		
-		input_seq_char[ cnt ] = c;
-		cnt++;
-  	}
-  	seq.close();
-  	
-  	unsigned char * sequence=input_seq_char;
-	INT text_size=cnt;
-
+	INT text_size = strlen( (char*) sequence);
 
 	INT b = ssa_list->size();
 	cout<<"Number of suffixes b = " << b << endl;
@@ -479,14 +460,6 @@ INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name, stri
 	free( FP );
 	
 	std::chrono::steady_clock::time_point end_total = std::chrono::steady_clock::now();
-	//std::cout<<"Time taken for SSA and LCP array "<<std::chrono::duration_cast<std::chrono::milliseconds>(end_total - start_total).count()/(double)1000 << "[s]" << std::endl;
-	//std::cout<<" Time taken by preprocessing "<<prep_total << "[s]" << std::endl;
-	//std::cout<<" Time taken by sorting fingerprints "<<sort_total << "[s]" << std::endl;
-	//std::cout<<" Time taken by hashing fingerprints "<<hash_total << "[s]" << std::endl;
-	//std::cout<<" Time taken by the rest of grouping "<<gr_total << "[s]" << std::endl;
-	//std::cout<<" Time taken by ordering "<<order_total << "[s]" << std::endl;
-
-	//std::cout<<"Writing the output"<< std::endl;
 
 	ofstream output_ssa(sa_index_name);
 	for(INT i = 0; i<final_ssa->size(); i++)
@@ -496,15 +469,11 @@ INT ssa(string seq_filename, vector<INT> * ssa_list , string sa_index_name, stri
 	for(INT i = 0; i<final_lcp->size(); i++)
 		output_lcp<<final_lcp->at(i)<<endl;
 	
-
 	delete( final_lcp_prime );
 	delete( final_ssa_prime );
 	delete( A );
 	delete( A_prime );
 	delete( P );
-	
-	free ( input_seq_char);
-	input_seq_char = NULL;
 	
 	return 0;
 }
