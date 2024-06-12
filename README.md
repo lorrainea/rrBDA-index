@@ -1,4 +1,4 @@
-rrBDA-index: Text Indexing for Long Patterns using Reduced Randomized Anchors
+rrBDA-index: Text Indexing for Long Patterns using Randomized Reduced Anchors
 ===
 
 
@@ -32,7 +32,7 @@ make -f Makefile.32-bit.gc
 <ell> - lower bound on the length of input patterns to consider. 
 <pattern_file> - name of input file containing the patterns.
 <output_filename> - name of output file, where pattern occurrences will be output.
-<ram_use> - RAM usage for external SA and LCP array construction (Mbits).
+<ram_use> - RAM usage for external SA and LCP array construction (MiB).
 <block_size> - size of block to use for constructing the bd-anchors (bytes).
 <index_filename> - name of the index file to be used (if it exists) otherwise to be created.
 ```

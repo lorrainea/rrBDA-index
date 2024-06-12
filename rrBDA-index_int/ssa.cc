@@ -75,23 +75,23 @@ auto compare(unsigned char * sequence, vector<INT> * A, INT lcp )
 }
 
 /* Compute the KR fingerprint of sequence[ssa..ssa+l-1] using the FP table -- Time is O(min(l,n/s)), where s is the size of the FP table */
-INT fingerprint( INT ssa, INT * FP, INT fp_len, INT l, unsigned char * sequence, INT text_size, INT power )
+uint64_t fingerprint( INT ssa, uint64_t * FP, INT fp_len, INT l, unsigned char * sequence, INT text_size, uint64_t power )
 {
-	INT fp = 0;
+	uint64_t fp = 0;
 	INT ssa_end = (text_size >= ssa+l) ? ssa+l : text_size; //this is the end of the substring we are interested in PLUS 1
 	bool subtract_slow = (text_size >= ssa+l) ? false : true;
 	
 	if( l > fp_len )
 	{
-		INT fp_short = 0;
+		uint64_t fp_short = 0;
 		if( ssa == 0 ) // then there is not short fragment before the substring
 		{
 			; // do nothing
 		} 
 		else if( ssa % fp_len  !=  0 ) // we are in-between two stored prefixes
 		{
-			INT prefix = ssa / fp_len; // this is the prefix we are in but we have something stored on the left
-			INT start = 0;
+			uint64_t prefix = ssa / fp_len; // this is the prefix we are in but we have something stored on the left
+			uint64_t start = 0;
 			
 			if( prefix != 0 )
 			{
@@ -104,16 +104,16 @@ INT fingerprint( INT ssa, INT * FP, INT fp_len, INT l, unsigned char * sequence,
 		}
 		else 	// we have the fp_short stored and we read it from FP
 		{	
-			INT prefix = ssa / fp_len;
+			uint64_t prefix = ssa / fp_len;
 			fp_short = FP[prefix - 1];
 		}	
 
-		INT fp_long = 0;
+		uint64_t fp_long = 0;
 
 		if( ssa_end % fp_len  != 0 )
 		{
-                        INT prefix = ssa_end / fp_len; // this is the prefix we are in but we have something stored on the left
-                        INT start = 0;
+                        uint64_t prefix = ssa_end / fp_len; // this is the prefix we are in but we have something stored on the left
+                        uint64_t start = 0;
 
                         if( prefix != 0 )
                         {
@@ -124,7 +124,7 @@ INT fingerprint( INT ssa, INT * FP, INT fp_len, INT l, unsigned char * sequence,
                 }
                 else
                 { 
-                	INT prefix = ssa_end / fp_len;
+                	uint64_t prefix = ssa_end / fp_len;
                 	fp_long = FP[prefix - 1];
                 }
 
@@ -142,12 +142,12 @@ INT fingerprint( INT ssa, INT * FP, INT fp_len, INT l, unsigned char * sequence,
 }
 
 /* Extend the prefixes of grouped suffixes by length l and re-group the computed KR fingerprints -- Time is O(b.min(l,n/s)), where s is the size of the FP table */
-INT group( vector<SSA> &B, vector<INT> * A, INT * FP, INT fp_len, INT l, unsigned char * sequence, INT text_size, INT b, INT &m, INT &z, INT hash_variable )
+INT group( vector<SSA> &B, vector<INT> * A, uint64_t * FP, INT fp_len, INT l, unsigned char * sequence, INT text_size, INT b, INT &m, INT &z, uint64_t hash_variable )
 {
     	vector<SSA> * B_prime = new vector<SSA>();
 	(*B_prime).reserve(b); 
 
-	INT power = karp_rabin_hashing::pow_mod_mersenne(hash_variable, l, 61);
+	uint64_t power = karp_rabin_hashing::pow_mod_mersenne(hash_variable, l, 61);
 	
 	const auto Bsz = B.size();
 	
@@ -161,11 +161,11 @@ INT group( vector<SSA> &B, vector<INT> * A, INT * FP, INT fp_len, INT l, unsigne
 		if( s <= (const INT)z )
 		{
 			double start = gettime();
-			vector<pair<INT,INT> > vec_to_sort;
+			vector<pair<uint64_t,INT> > vec_to_sort;
 			for(auto it=(B)[i].L.begin();it!=(B)[i].L.end(); ++it)
 			{
 				if ( (*A)[(*it)]+(B)[i].lcp + l > text_size ) { tmp.push_back((*it)); continue; }
-				INT fp = fingerprint( (*A)[(*it)]+(B)[i].lcp, FP, fp_len, l, sequence, text_size, power );
+				uint64_t fp = fingerprint( (*A)[(*it)]+(B)[i].lcp, FP, fp_len, l, sequence, text_size, power );
 				vec_to_sort.push_back( make_pair(fp,*it) );
 			}
 			#if IPS4 == true
@@ -192,11 +192,11 @@ INT group( vector<SSA> &B, vector<INT> * A, INT * FP, INT fp_len, INT l, unsigne
 		else
 		{	
 			double start = gettime();
-    			auto groups = ankerl::unordered_dense::map<INT, INT >();
+    			auto groups = ankerl::unordered_dense::map<uint64_t, INT >();
 			for(auto it=(B)[i].L.begin();it!=(B)[i].L.end(); ++it)
 			{
 				if ( (*A)[(*it)]+(B)[i].lcp + l > text_size ) { tmp.push_back((*it)); continue; }
-				INT fp = fingerprint( (*A)[(*it)]+(B)[i].lcp, FP, fp_len, l, sequence, text_size, power );
+				uint64_t fp = fingerprint( (*A)[(*it)]+(B)[i].lcp, FP, fp_len, l, sequence, text_size, power );
 				auto itx = groups.find(fp);
 				if(itx == groups.end())
 				{
@@ -312,7 +312,7 @@ INT order( vector<INT> * final_ssa, vector<INT> * final_lcp, vector<SSA> &B, vec
 }
 
 
-INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, INT hash_variable )
+INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, uint64_t hash_variable )
 {
 	INT z = THRESHOLD;
 	INT text_size = strlen( (char*) sequence);
@@ -329,8 +329,8 @@ INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name,
 	cout<<"Size s of FP table = " << s <<endl<<endl;
 	
 	// computing fingerprints
-	INT * FP =  ( INT * ) calloc( s , sizeof( INT ) );
-	INT fp = 0;
+	uint64_t * FP =  ( uint64_t * ) calloc( s , sizeof( uint64_t ) );
+	uint64_t fp = 0;
 	
 	std::chrono::steady_clock::time_point start_total = std::chrono::steady_clock::now();
 	
@@ -338,9 +338,9 @@ INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name,
 	double start = gettime();
 	cout<<"Preprocessing starts"<<endl;
 	INT i = 0;
-	for(INT j = 0; j < s; ++j )
+	for(uint64_t j = 0; j < s; ++j )
 	{
-		for (INT k = 0; k < fp_len; k ++ )	fp = karp_rabin_hashing::concat(fp, sequence[i+k], 1);
+		for (uint64_t k = 0; k < fp_len; k ++ )fp = karp_rabin_hashing::concat(fp, sequence[i+k], 1);
 			FP[j]=fp;
 		i += fp_len;
 		if ( i + fp_len > text_size ) break;

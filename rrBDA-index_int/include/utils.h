@@ -24,9 +24,9 @@ long double wclock();
 
 struct FP_
  {
-   INT               start_pos;
-   INT               fp_pos;
-   INT		     pot_bd;
+   uint64_t               start_pos;
+   uint64_t               fp_pos;
+   uint64_t		  pot_bd;
    
  };
  

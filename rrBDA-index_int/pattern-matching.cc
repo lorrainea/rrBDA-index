@@ -1,3 +1,21 @@
+/**
+    rrBDA-index_int: Randomized Reduced Bi-directional Anchors (using intenrnal memory)
+    Copyright (C) 2024 Lorraine A. K. Ayad, Grigorios Loukides, Solon P. Pissis
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 #include <unordered_set>
 #include "utils.h"
 #include "stream.h"
@@ -9,16 +27,16 @@
 using namespace std;
 using namespace sdsl;
 
-INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
+INT red_minlexrot( unsigned char * X, INT n, uint64_t k, uint64_t power )
 {  
-  	INT fp = 0;
+  	uint64_t fp = 0;
     	vector<INT> * draws = new vector<INT>();
 	
-	for(INT j = 0; j<k; j++)
+	for(uint64_t j = 0; j<k; j++)
         	fp =  karp_rabin_hashing::concat( fp, X[j] , 1 );
 
 	draws->push_back(0);
-	INT smallest_fp = fp;
+	uint64_t smallest_fp = fp;
   	INT smallest_fp_pos = 0;
   	
   	for(INT j = 1; j<=n-k; j++)
@@ -56,8 +74,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 			bool cont = false;
 			for(INT j = k; j<n; j++)
 			{
-				char a = X[a_pos];
-				char b = X[b_pos];
+				unsigned char a = X[a_pos];
+				unsigned char b = X[b_pos];
 						
 				if( b_pos >= n )
 				{
@@ -84,8 +102,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 				cont  = false;
 				for(INT j = 0; j<n; j++)
 				{
-		      			char a = X[a_pos];
-					char b = X[b_pos];
+		      			unsigned char a = X[a_pos];
+					unsigned char b = X[b_pos];
 							
 					if( a_pos >= n )
 					{
@@ -112,8 +130,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 			{
 				for(INT j = 0; j<n; j++)
 				{
-		      			char a = X[a_pos];
-					char b = X[b_pos];
+		      			unsigned char a = X[a_pos];
+					unsigned char b = X[b_pos];
 							
 					if( b_pos >= n || b < a )
 					{
@@ -132,6 +150,7 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
         delete( draws );
    	return smallest_fp_pos;
 }
+
 
 /* Booth's O(n)-time algorithm -- slightly adapted for efficiency */
 INT minlexrot( unsigned char * X, INT *f, INT n)

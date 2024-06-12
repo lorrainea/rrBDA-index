@@ -1,5 +1,5 @@
 /**
-    rrBDA-index_II_ext: Randomized Reduced Bi-directional Anchors (using external memory)
+    rrBDA-index_ext: Randomized Reduced Bi-directional Anchors (using external memory)
     Copyright (C) 2024 Lorraine A. K. Ayad, Grigorios Loukides, Solon P. Pissis
 
     This program is free software: you can redistribute it and/or modify
@@ -36,23 +36,23 @@ using namespace sdsl;
 #endif
 
 /* Computes the bd-anchors of a string of length n in O(n) time */
-INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT> &anchors, INT * FP, INT power)
+INT bd_anchors(  unsigned char * seq, INT pos, INT ell, uint64_t k, unordered_set<INT> &anchors, uint64_t * FP, uint64_t power)
 {
 
-	INT w = ell;
+	uint64_t w = ell;
 	INT n = strlen ( (char*) seq );
-	INT fp = 0;
+	uint64_t fp = 0;
 
         for(INT j = 0; j<k; j++)
                 fp =  karp_rabin_hashing::concat( fp, seq[j] , 1 );
 
         FP[0] = fp; 
         
-        deque<pair<INT,utils::FP_>> min_fp = {};
+        deque<pair<uint64_t,utils::FP_>> min_fp = {};
 	vector<utils::FP_> minimizers;
 	
         // find all fingerprints for all k substrings
-        for( INT j = 1; j<=n-k; j++)
+        for( uint64_t j = 1; j<=n-k; j++)
         {
                 fp = karp_rabin_hashing::concat( fp, seq[j+k-1] , 1 );
                 fp = karp_rabin_hashing::subtract_fast( fp, seq[j-1] , power );
@@ -61,14 +61,12 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
                
         }
 
-
 	/* Compute reduced bd-anchors for every window of size ell */
-	for( INT j = 0; j<=n-w; j++ )
+	for( uint64_t j = 0; j<=n-w; j++ )
 	{
-	
 		if( j == 0 )
 		{
-			for ( INT l = 0; l <= w-k; l++) 
+			for ( uint64_t l = 0; l <= w-k; l++) 
 		   	{
 		 		while ( !min_fp.empty() && FP[l] < min_fp.back().first )
 		 			min_fp.pop_back();
@@ -97,8 +95,8 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 			
 		}
 			
-		INT min_ = min_fp.at(0).first;
-		for(INT i = 0; i<min_fp.size(); i++)
+		uint64_t min_ = min_fp.at(0).first;
+		for(uint64_t i = 0; i<min_fp.size(); i++)
 		{
 			if( min_fp.at(i).first == min_ )
 			{
@@ -108,17 +106,17 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				break;
 		}
 		
-		char a = ' ';
-		char b = ' ';
+		unsigned char a = ' ';
+		unsigned char b = ' ';
 		
-		INT a_pos = 0;
-		INT b_pos = 0;
+		uint64_t a_pos = 0;
+		uint64_t b_pos = 0;
 		bool cont = false;
 		
 		/* Filter draws if there are more than one minimum fp, otherwise only one potential bd-anchor in window */			
 		if( minimizers.size() > 1 )
 		{ 	
-			INT smallest_fp_pos = minimizers.at(0).start_pos;
+			uint64_t smallest_fp_pos = minimizers.at(0).start_pos;
 		
        		
 			for(INT i = 1; i<minimizers.size(); i++ )
@@ -128,7 +126,7 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				
 				cont = false;
 			
-				for(INT c = k; c<w; c++)
+				for(uint64_t c = k; c<w; c++)
 				{
 					a = seq[a_pos];
 					b = seq[b_pos];
@@ -155,7 +153,7 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, INT k, unordered_set<INT
 				if( cont == true )
 				{
 					cont  = false;
-					for(INT c = 0; c<w; c++)
+					for(uint64_t c = 0; c<w; c++)
 					{
 		      				a = seq[a_pos];
 						b = seq[b_pos];

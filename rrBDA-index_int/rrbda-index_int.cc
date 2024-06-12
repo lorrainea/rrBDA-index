@@ -136,14 +136,8 @@ int main(int argc, char **argv)
 	{	
 		is_text.read(reinterpret_cast<char*>(&c), 1);
 		
-		if( (unsigned char) c == '\n' )
-			continue;
-		else
-		{
-			alphabet.insert( (unsigned char) c );
-			text_size++;
-		}
-		
+		alphabet.insert( (unsigned char) c );
+		text_size++;
 	}
 	is_text.close();
 	
@@ -160,18 +154,18 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 	
-	INT k  = ceil(4*log2(ell)/log2(alphabet.size()));
+	uint64_t k  = ceil(4*log2(ell)/log2(alphabet.size()));
 	if( ell - k - 1 < 0 )
 		k = 2;
 	
 	
-	INT hash = karp_rabin_hashing::init();
-	INT power = karp_rabin_hashing::pow_mod_mersenne(hash, k, 61);
+	uint64_t hash = karp_rabin_hashing::init();
+	uint64_t power = karp_rabin_hashing::pow_mod_mersenne(hash, k, 61);
 	
    	ifstream is_block;
 	is_block.open (argv[1], ios::in | ios::binary);
 	unsigned char * text_block = ( unsigned char * ) malloc (  ( block + 1 ) * sizeof ( unsigned char ) );
-	INT * rank = ( INT * ) malloc( ( block  ) *  sizeof( INT ) );
+	uint64_t * rank = ( uint64_t * ) malloc( ( block  ) *  sizeof( uint64_t ) );
 	unsigned char * suffix_block = ( unsigned char * ) malloc (  ( ell  ) * sizeof ( unsigned char ) );
 		
 	c = 0;
@@ -182,22 +176,19 @@ int main(int argc, char **argv)
 	{	
 		is_block.read(reinterpret_cast<char*>(&c), 1);
 			
-		if( (unsigned char) c != '\n' )
+		text_block[count] = (unsigned char) c ;
+		count++;
+		if( count == block || i == text_size - 1 )
 		{
-			text_block[count] = (unsigned char) c ;
-			count++;
-			if( count == block || i == text_size - 1 )
-			{
-				text_block[count] = '\0';
+			text_block[count] = '\0';
 					
-				bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
+			bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
 					
-				memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
-				memcpy( &text_block[0], &suffix_block[0], ell -1 );
+			memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
+			memcpy( &text_block[0], &suffix_block[0], ell -1 );
 					
-				pos = pos + ( block - ell + 1 );
-				count = ell - 1;	
-			}
+			pos = pos + ( block - ell + 1 );
+			count = ell - 1;	
 		}
 	}
 		

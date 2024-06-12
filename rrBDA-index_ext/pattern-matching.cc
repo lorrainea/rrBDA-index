@@ -1,5 +1,5 @@
 /**
-    rrBDA-index_II_ext: Randomized Reduced Bi-directional Anchors (using external memory)
+    rrBDA-index_ext: Randomized Reduced Bi-directional Anchors (using external memory)
     Copyright (C) 2024 Lorraine A. K. Ayad, Grigorios Loukides, Solon P. Pissis
 
     This program is free software: you can redistribute it and/or modify
@@ -27,16 +27,16 @@
 using namespace std;
 using namespace sdsl;
 
-INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
+INT red_minlexrot( unsigned char * X, INT n, uint64_t k, uint64_t power )
 {  
-  	INT fp = 0;
+  	uint64_t fp = 0;
     	vector<INT> * draws = new vector<INT>();
 	
 	for(INT j = 0; j<k; j++)
         	fp =  karp_rabin_hashing::concat( fp, X[j] , 1 );
 
 	draws->push_back(0);
-	INT smallest_fp = fp;
+	uint64_t smallest_fp = fp;
   	INT smallest_fp_pos = 0;
   	
   	for(INT j = 1; j<=n-k; j++)
@@ -74,8 +74,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 			bool cont = false;
 			for(INT j = k; j<n; j++)
 			{
-				char a = X[a_pos];
-				char b = X[b_pos];
+				unsigned char a = X[a_pos];
+				unsigned char b = X[b_pos];
 						
 				if( b_pos >= n )
 				{
@@ -102,8 +102,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 				cont  = false;
 				for(INT j = 0; j<n; j++)
 				{
-		      			char a = X[a_pos];
-					char b = X[b_pos];
+		      			unsigned char a = X[a_pos];
+					unsigned char b = X[b_pos];
 							
 					if( a_pos >= n )
 					{
@@ -130,8 +130,8 @@ INT red_minlexrot( unsigned char * X, INT n, INT k, INT power )
 			{
 				for(INT j = 0; j<n; j++)
 				{
-		      			char a = X[a_pos];
-					char b = X[b_pos];
+		      			unsigned char a = X[a_pos];
+					unsigned char b = X[b_pos];
 							
 					if( b_pos >= n || b < a )
 					{
