@@ -13,13 +13,13 @@ How to use
 ```
 cd rrBDA-index_int
 ./pre-install.sh
-make -f Makefile.32-bit.gc
+make -f Makefile.32-bit.gcc
 ```
 
 ```
 cd rrBDA-index_ext
 ./pre-install.sh
-make -f Makefile.32-bit.gc
+make -f Makefile.32-bit.gcc
 ```
 
 ### Usage
@@ -40,6 +40,6 @@ make -f Makefile.32-bit.gc
 ### Examples
 
 ```
- $ ./bda-index_int ./data/text 3 ./data/patterns out 10 index
- $ ./bda-index_ext ./data/text 3 ./data/patterns out 1024 10 index
+ $ ./rrbda-index_int ./data/text 3 ./data/patterns out 10 index
+ $ ./rrbda-index_ext ./data/text 3 ./data/patterns out 1024 10 index
 ```
