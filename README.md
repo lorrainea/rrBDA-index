@@ -8,7 +8,7 @@ Requirements
 
 How to use
 ----------
-<b>INPUT</b>: A file containing a single text and a file containing a set of patterns seperated by a new line.
+<b>INPUT</b>: A file containing the text and a file containing a set of patterns seperated by a new line.
 
 <b>OUTPUT</b>: A file containing the set of patterns and the starting position of their occurrences within the text.
 
