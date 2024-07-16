@@ -43,3 +43,8 @@ make -f Makefile.32-bit.gcc
  $ ./rrbda-index_int ./data/text 3 ./data/patterns 10 out index
  $ ./rrbda-index_ext ./data/text 3 ./data/patterns 10 1024 out index
 ```
+
+License
+--------
+
+GNU GPLv3 License; Copyright (C) 2023 Lorraine A. K. Ayad, Grigorios Loukides and Solon P. Pissis.
