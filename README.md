@@ -56,6 +56,11 @@ make -f Makefile.32-bit.gcc
  $ ./rrbda-index_ext ./data/text 3 ./data/patterns 10 1024 out index
 ```
 
+Citation
+--------
+
+Lorraine A. K. Ayad, Grigorios Loukides, and Solon P. Pissis. 2024. Text indexing for long patterns using locally consistent anchors. Submitted.
+
 License
 --------
 
