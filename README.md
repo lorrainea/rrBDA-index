@@ -10,12 +10,14 @@ How to use
 
 ### Installation
 
+For the construction using only internal memory, use:
 ```
 cd rrBDA-index_int
 ./pre-install.sh
 make -f Makefile.32-bit.gcc
 ```
 
+For the construction using external and internal memory, use:
 ```
 cd rrBDA-index_ext
 ./pre-install.sh
