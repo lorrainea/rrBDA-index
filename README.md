@@ -1,6 +1,10 @@
 Text Indexing for Long Patterns using Randomized Reduced Anchors
 ===
 
+Requirements
+-----------
+* A GNU/Linux system
+* A modern C++11 ready compiler such as g++ version 4.9 or higher
 
 How to use
 ----------
