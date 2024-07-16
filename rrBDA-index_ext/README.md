@@ -1,4 +1,4 @@
-rrBDA-index ext
+rrBDA-index using external and internal memory
 ===
 
 How to use
