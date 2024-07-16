@@ -51,6 +51,13 @@ make -f Makefile.32-bit.gcc
 
 ### Examples
 
+For the construction that uses internal memory only, run as follows:
+```
+ $ ./rrbda-index_int ./data/text 3 ./data/patterns 10 out index
+ $ ./rrbda-index_ext ./data/text 3 ./data/patterns 10 1024 out index
+```
+
+For the construction that uses both external and internal memory, run as follows:
 ```
  $ ./rrbda-index_int ./data/text 3 ./data/patterns 10 out index
  $ ./rrbda-index_ext ./data/text 3 ./data/patterns 10 1024 out index
