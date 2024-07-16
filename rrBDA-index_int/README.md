@@ -1,4 +1,4 @@
-rrBDA-index int
+rrBDA-index using internal memory
 ===
 
 How to use
