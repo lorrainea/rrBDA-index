@@ -1,4 +1,4 @@
-Text Indexing for Long Patterns using Randomized Reduced Anchors
+Text Indexing for Long Patterns
 ===
 
 Requirements
