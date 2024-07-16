@@ -47,4 +47,4 @@ make -f Makefile.32-bit.gcc
 License
 --------
 
-GNU GPLv3 License; Copyright (C) 2023 Lorraine A. K. Ayad, Grigorios Loukides and Solon P. Pissis.
+GNU GPLv3 License; Copyright (C) 2024 Lorraine A. K. Ayad, Grigorios Loukides and Solon P. Pissis.
