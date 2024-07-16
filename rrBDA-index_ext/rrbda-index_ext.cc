@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 	if( argc < 8 )
  	{
         	cout<<"Wrong arguments!\n";
- 		cout<<"./rrbda-index_ext <text_file> <ell> <pattern_file> <output_filename> <block_size> <ram_use> <index_filename>\n";
+ 		cout<<"./rrbda-index_ext <text_file> <ell> <pattern_file> <block_size> <ram_use> <output_filename> <index_filename>\n";
  		exit(-1);
  	}
 	
