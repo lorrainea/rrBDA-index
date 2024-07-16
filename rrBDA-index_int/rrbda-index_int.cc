@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 	if( argc < 7 )
  	{
         	cout<<"Wrong arguments!\n";
- 		cout<<"./rrbda-index_int <text_file> <ell> <pattern_file> <output_filename> <block_size> <index_filename>\n";
+ 		cout<<"./rrbda-index_int <text_file> <ell> <pattern_file> <block_size> <output_filename> <index_filename>\n";
  		exit(-1);
  	}
 	
