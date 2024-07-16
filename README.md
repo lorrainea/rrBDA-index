@@ -62,7 +62,7 @@ For the construction that uses both external and internal memory, run as follows
  $ ./rrbda-index_int ./data/text 3 ./data/patterns 10 out index
  $ ./rrbda-index_ext ./data/text 3 ./data/patterns 10 1024 out index
 ```
-Note that the exact same index is constructed in the end.
+Note that the <b>exact same index<\b> is constructed in the end.
 
 Citation
 --------
