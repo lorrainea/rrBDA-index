@@ -9,7 +9,7 @@ How to use
 ```
 cd rrBDA-index_ext
 ./pre-install.sh
-make -f Makefile.32-bit.gc
+make -f Makefile.32-bit.gcc
 ```
 
 ### Usage
