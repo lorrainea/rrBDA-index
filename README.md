@@ -1,4 +1,4 @@
-Text indexing for long patterns using locally consistent anchors
+Text Indexing for Long Patterns using Randomized Reduced Anchors
 ===
 
 
