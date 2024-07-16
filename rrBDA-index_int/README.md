@@ -9,7 +9,7 @@ How to use
 ```
 cd rrBDA-index_int
 ./pre-install.sh
-make -f Makefile.32-bit.gc
+make -f Makefile.32-bit.gcc
 ```
 
 ### Usage
@@ -28,5 +28,5 @@ make -f Makefile.32-bit.gc
 ### Examples
 
 ```
- $ ./rrbda-index_ext ./data/text 3 ./data/patterns out 10 index
+ $ ./rrbda-index_int ./data/text 3 ./data/patterns out 10 index
 ```
