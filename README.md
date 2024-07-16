@@ -1,4 +1,4 @@
-rrBDA-index: Text Indexing for Long Patterns using Randomized Reduced Anchors
+Text indexing for long patterns using locally consistent anchors
 ===
 
 
