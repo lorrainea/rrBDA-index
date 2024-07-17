@@ -5,7 +5,7 @@ Description
 -----------
 This repository maintains a time- and space-efficient construction algorithm of the <b>rrBDA-index</b>, a new variant of the text index for long patterns introduced by [Loukides, Pissis, and Sweering](https://doi.org/10.1109/TKDE.2022.3231780).
 This new construction relies on a linear-time algorithm for computing a randomized version of reduced bd-anchors. 
-It comes in two flavours, a semi-external memory implementation and an internal memory implementation, to construct the index in small space.
+It comes in two flavours, a semi-external memory implementation and an internal memory implementation.
 
 Requirements
 -----------
