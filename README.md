@@ -1,4 +1,4 @@
-Text Indexing for Long Patterns
+rrBDA-index: Text Indexing for Long Patterns
 ===
 
 Description
