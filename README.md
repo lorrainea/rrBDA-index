@@ -10,7 +10,7 @@ It comes in two flavours, a semi-external memory implementation and an internal 
 Requirements
 -----------
 * A GNU/Linux system
-* A modern C++11 ready compiler such as g++ version 4.9 or higher
+* A modern C++17 ready compiler 
 
 How to use
 ----------
