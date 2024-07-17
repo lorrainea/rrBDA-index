@@ -65,7 +65,7 @@ Note that the <b>exact same index</b> is constructed in the end.
 Citation
 --------
 
-Lorraine A. K. Ayad, Grigorios Loukides, and Solon P. Pissis. 2024. Text indexing for long patterns using locally consistent anchors. Submitted.
+Lorraine A. K. Ayad, Grigorios Loukides, and Solon P. Pissis. 2024. Text indexing for long patterns using locally consistent anchors. [Preprint](https://arxiv.org/abs/2407.11819) (Under Review).
 
 License
 --------
