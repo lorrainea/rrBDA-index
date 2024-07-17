@@ -2,6 +2,7 @@
 #define __UTILS_H_INCLUDED
 
 #include <cstdio>
+#include <cstdint>
 #include <cstdlib>
 
 #include <string>
