@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 	
-	uint64_t k  = ceil(4*log2(ell)/log2(alphabet.size()));
+	INT k  = ceil(4*log2(ell)/log2(alphabet.size()));
 	if( ell - k - 1 < 0 )
 		k = 2;
 	
