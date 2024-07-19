@@ -66,7 +66,7 @@ Evaluation
 -----------
 We have conducted an extensive evaluation of different text indexes. We give a teaser below using the full human genome (version GRCh38) and 500K patterns (randomly selected from the text).
 
-This plot depicts the size of the indexes for growing <b>ℓ</b>, the lower bound on the supported length of patterns.
+This plot depicts the size of the indexes for growing <b>ℓ</b>, the lower bound on the supported pattern lengths.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size" width=500 height=400>
   </p>
