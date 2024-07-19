@@ -66,12 +66,12 @@ Evaluation
 -----------
 We have conducted an extensive evaluation of different text indexes. We give a teaser below using the full human genome (version GRCh38) and 500K patterns (randomly selected from the text).
 
-This plot depicts the size of the indexes for growing <b>ℓ</b>, the lower bound on the supported pattern lengths.
+The plot below depicts the size of the indexes for growing <b>ℓ</b>, the lower bound on the supported pattern lengths.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size" width=500 height=400>
   </p>
 
-This plot depicts the average pattern matching time of the indexes for growing pattern length <b>|P|</b>.
+The plot below depicts the average pattern matching time of the indexes for growing pattern length <b>|P|</b>.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time" width=500 height=400>
   </p>
