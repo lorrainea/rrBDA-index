@@ -66,8 +66,13 @@ Evaluation
 -----------
 We provide an extensive evaluation of different text indexes. We give a short excerpt below.
 
+This plot depicts the size of the indexes for growing ell.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size">
+  </p>
+
+This plot depicts the size of the indexes for growing pattern length.
+  <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time">
   </p>
 
