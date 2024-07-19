@@ -62,6 +62,15 @@ For the construction that uses both external and internal memory, run as follows
 ```
 Note that the <b>exact same index</b> is constructed in the end.
 
+Evaluation
+-----------
+We provide an extensive evaluation of different text indexes. We give a short excerpt below.
+
+  <p align="center">
+    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size">
+    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time">
+  </p>
+
 Citation
 --------
 
