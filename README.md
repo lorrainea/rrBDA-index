@@ -64,7 +64,7 @@ Note that the <b>exact same index</b> is constructed in the end.
 
 Evaluation
 -----------
-We have conducted an extensive evaluation of different text indexes. We give a short excerpt below.
+We have conducted an extensive evaluation of different text indexes. We give a teaser below.
 
 This plot depicts the size of the indexes for growing ell.
   <p align="center">
