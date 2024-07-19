@@ -66,12 +66,12 @@ Evaluation
 -----------
 We have conducted an extensive evaluation of different text indexes. We give a teaser below using the full human genome (version hg38) and 500K patterns (randomly selected from the text).
 
-This plot depicts the size of the indexes for growing ell.
+This plot depicts the size of the indexes for growing <b>ell</b>.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size">
   </p>
 
-This plot depicts the size of the indexes for growing pattern length.
+This plot depicts the size of the indexes for growing pattern length <b>|P|</b>.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time">
   </p>
