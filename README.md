@@ -71,7 +71,7 @@ This plot depicts the size of the indexes for growing <b>ell</b>.
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size" width=500 height=400>
   </p>
 
-This plot depicts the size of the indexes for growing pattern length <b>|P|</b>.
+This plot depicts the average pattern matching time of the indexes for growing pattern length <b>|P|</b>.
   <p align="center">
     <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time" width=500 height=400>
   </p>
