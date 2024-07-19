@@ -68,12 +68,12 @@ We have conducted an extensive evaluation of different text indexes. We give a t
 
 This plot depicts the size of the indexes for growing ell.
   <p align="center">
-    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size" style="height:80%;">
+    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_size.png" alt="size" style="height:50%;">
   </p>
 
 This plot depicts the size of the indexes for growing pattern length.
   <p align="center">
-    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time" style="height:80%;">
+    <img src="https://github.com/lorrainea/rrBDA-index/blob/main/.images/hg38_pattern.png" alt="query_time" style="height:50%;">
   </p>
 
 Citation
