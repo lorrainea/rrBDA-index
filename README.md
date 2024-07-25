@@ -33,6 +33,7 @@ cd rrBDA-index_ext
 ./pre-install.sh
 make -f Makefile.32-bit.gcc
 ```
+In the same directories, you can find makefiles for 64-bit integers.
 
 ### Usage
 
