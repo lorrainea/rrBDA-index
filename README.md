@@ -20,14 +20,14 @@ How to use
 
 ### Installation
 
-For the construction that uses internal memory only, compile as follows:
+For the construction that uses internal memory only and 32-bit integers, compile as follows:
 ```
 cd rrBDA-index_int
 ./pre-install.sh
 make -f Makefile.32-bit.gcc
 ```
 
-For the construction that uses both external and internal memory, compile as follows:
+For the construction that uses both external and internal memory and 32-bit integers, compile as follows:
 ```
 cd rrBDA-index_ext
 ./pre-install.sh
