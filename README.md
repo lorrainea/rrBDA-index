@@ -65,7 +65,7 @@ Note that the <b>exact same index</b> is constructed in the end.
 
 Evaluation
 -----------
-We have conducted an extensive evaluation of different text indexes. We give a teaser below using the full human genome (version GRCh38) and a set of 500K patterns (randomly selected from the text).
+We have conducted an extensive evaluation of different text indexes. We give a teaser below using the whole human genome (version GRCh38) and a set of 500K patterns (randomly selected from the text).
 
 The plot below depicts the indexes size for growing <b>ℓ</b>, the lower bound on the supported pattern lengths.
   <p align="center">
