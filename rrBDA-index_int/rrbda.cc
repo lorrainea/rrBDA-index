@@ -35,7 +35,7 @@ using namespace sdsl;
 #include <divsufsort.h>                                       	  // include header for suffix sort
 #endif
 
-/* Computes the bd-anchors of a string of length n in O(n) time */
+/* Computes the bd-anchors of a string of length n */
 INT bd_anchors(  unsigned char * seq, INT pos, INT ell, uint64_t k, unordered_set<INT> &anchors, uint64_t * FP, uint64_t power)
 {
 
@@ -214,3 +214,46 @@ INT bd_anchors(  unsigned char * seq, INT pos, INT ell, uint64_t k, unordered_se
 						
 	return 0;
 }
+
+
+INT compute_anchors(char * arg1, unordered_set<INT> &text_anchors, INT text_size, INT block, INT ell, INT k, uint64_t power)
+{
+
+   	ifstream is_block;
+	is_block.open (arg1, ios::in | ios::binary);
+	unsigned char * text_block = ( unsigned char * ) malloc (  ( block + 1 ) * sizeof ( unsigned char ) );
+	uint64_t * rank = ( uint64_t * ) malloc( ( block  ) *  sizeof( uint64_t ) );
+	unsigned char * suffix_block = ( unsigned char * ) malloc (  ( ell  ) * sizeof ( unsigned char ) );
+		
+	unsigned char c = 0;
+	INT count = 0;
+	INT pos = 0;
+	 	
+	for (INT i = 0; i < text_size; i++)
+	{	
+		is_block.read(reinterpret_cast<char*>(&c), 1);
+			
+		text_block[count] = (unsigned char) c ;
+		count++;
+		if( count == block || i == text_size - 1 )
+		{
+			text_block[count] = '\0';
+					
+			bd_anchors( text_block, pos, ell, k, text_anchors, rank, power );
+					
+			memcpy( &suffix_block[0], &text_block[ block - ell + 1], ell -1 );
+			memcpy( &text_block[0], &suffix_block[0], ell -1 );
+					
+			pos = pos + ( block - ell + 1 );
+			count = ell - 1;	
+		}
+	}
+		
+	is_block.close();
+	free( text_block );
+	free( suffix_block );
+	free( rank );	
+
+	return 0;
+	
+}	

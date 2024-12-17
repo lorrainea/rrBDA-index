@@ -312,10 +312,9 @@ INT order( vector<INT> * final_ssa, vector<INT> * final_lcp, vector<SSA> &B, vec
 }
 
 
-INT ssa(unsigned char * sequence, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, uint64_t hash_variable )
+INT ssa(unsigned char * sequence, INT text_size, vector<INT> * ssa_list , string sa_index_name, string lcp_index_name, vector<INT> * final_ssa, vector<INT> * final_lcp, uint64_t hash_variable )
 {
 	INT z = THRESHOLD;
-	INT text_size = strlen( (char*) sequence);
 
 	INT b = ssa_list->size();
 	cout<<"Number of suffixes b = " << b << endl;

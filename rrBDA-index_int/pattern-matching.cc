@@ -474,3 +474,169 @@ pair<INT,INT> rev_pattern_matching (unsigned char *  w, unsigned char *  a, vect
 	
 	return interval;
 }
+
+
+INT query(char * arg3, unsigned char * text_string, string output_filename, INT text_size, vector<INT> * LSA, vector<INT> * LLCP, vector<INT> * RSA, vector<INT> * RLCP, rmq_succinct_sct<> &lrmq, rmq_succinct_sct<> &rrmq, INT g, INT ell, INT power, INT k )
+{
+	INT num_seqs = 0;           // the total number of patterns considered
+	INT max_len_pattern = 0;
+	INT ALLOC_SIZE = 180224;
+	INT seq_len = 0;
+	INT max_alloc_seq_len = 0;
+	INT max_alloc_seqs = 0;
+	unsigned char ** patterns = NULL;
+	
+	unsigned char c = 0;
+	// Input patterns
+ 	ifstream is_patterns;
+ 	is_patterns.open (arg3, ios::in | ios::binary);
+	
+	while ( is_patterns.read(reinterpret_cast<char*>(&c), 1) )
+	{
+		if( num_seqs >= max_alloc_seqs )
+		{
+			patterns = ( unsigned char ** ) realloc ( patterns,   ( max_alloc_seqs + ALLOC_SIZE ) * sizeof ( unsigned char* ) );
+			patterns[ num_seqs ] = NULL;
+			
+			max_alloc_seqs += ALLOC_SIZE;
+		}
+		
+		if( seq_len != 0 && c == '\n' )
+		{
+			patterns[ num_seqs ][ seq_len ] = '\0';
+			
+			num_seqs++;
+
+			if( seq_len > max_len_pattern)
+				max_len_pattern = seq_len;
+			
+			seq_len = 0;
+			max_alloc_seq_len = 0;
+			
+			patterns[ num_seqs ] = NULL;
+		}
+		else 
+		{
+			if ( seq_len >= max_alloc_seq_len )
+			{
+				patterns[ num_seqs ] = ( unsigned char * ) realloc ( patterns[ num_seqs ],   ( max_alloc_seq_len + ALLOC_SIZE ) * sizeof ( unsigned char ) );
+				max_alloc_seq_len += ALLOC_SIZE;
+			}
+			
+			patterns[ num_seqs ][ seq_len ] = (unsigned char) c;	
+			seq_len++;	
+		}
+	} 
+	is_patterns.close();
+	
+	INT *f = new INT[ell<<1];
+  	ofstream pattern_output;
+	pattern_output.open(output_filename);
+	
+	unsigned char * left_pattern = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+	unsigned char * first_window = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+	unsigned char * right_pattern = ( unsigned char * ) malloc (  ( max_len_pattern + 1 ) * sizeof ( unsigned char ) );
+			
+	INT hits = 0;
+	for(INT i = 0; i<num_seqs; i++)
+   	{
+ 		INT pattern_size = strlen( (char*) patterns[i] );
+   	
+  		if ( pattern_size < ell )
+  		{
+  			pattern_output<< patterns[i] << " skipped: its length is less than ell!\n";
+  			continue;
+  		}
+		
+		memcpy( &first_window[0], &patterns[i][0], ell );
+		first_window[ell] = '\0';
+		
+  		INT j = red_minlexrot( first_window, ell, k, power );
+  		
+		if ( pattern_size - j >= j ) //if the right part is bigger than the left part, then search the right part to get a smaller interval on RSA (on average)
+		{ 
+			
+			INT right_pattern_size = pattern_size-j;
+			memcpy( &right_pattern[0], &patterns[i][j], pattern_size-j );
+			right_pattern[pattern_size - j] = '\0';
+			
+			pair<INT,INT> right_interval = pattern_matching ( right_pattern, text_string, RSA, RLCP, rrmq, g, right_pattern_size, text_size );
+  												
+
+			if(right_interval.first > right_interval.second)
+			{
+  				pattern_output<< patterns[i] << " was not found in the text!\n";
+				continue;
+			}	
+		
+			for(INT t = right_interval.first; t <= right_interval.second; t++ ) //this can be a large interval and only one occurrence is valid.
+			{
+				INT index = RSA->at(t);
+				INT jj = j;		//this is the index of the anchor in the pattern
+				index--; 	jj--;	//jump the index of the anchor and start looking on the left
+				while ( ( jj >= 0 ) && ( index >= 0 ) && ( text_string[index] == patterns[i][jj] ) )
+				{
+					index--; jj--;
+				}
+				if ( jj < 0 ) //we have matched the pattern completely
+				{
+					pattern_output<< patterns[i] <<" found at position "<< index + 1 << " of the text"<<endl;
+					hits++;
+				}					
+			}
+		}
+		else //otherwise, search the left part to get a smaller interval on LSA (on average)
+		{ 
+			INT s = 0;
+			INT left_pattern_size  = j+1;
+			for(INT a = j; a>=0; a--)
+			{
+				left_pattern[s] = patterns[i][a];
+				s++;
+			}
+			left_pattern[j+1] = '\0';
+			
+			
+			pair<INT,INT> left_interval = rev_pattern_matching ( left_pattern, text_string, LSA, LLCP, lrmq, g, left_pattern_size, text_size );
+  														
+			if(left_interval.first > left_interval.second)	
+			{
+  				pattern_output<< patterns[i] << " was not found in the text!\n";
+				continue;
+			}
+			for(INT t = left_interval.first; t <= left_interval.second; t++ ) //this can be a large interval and only one occurrence is valid.
+			{
+				INT index = text_size-1-LSA->at(t);
+				INT jj = j;		//this is the index of the anchor in the pattern
+				index++; 	jj++;	//jump the index of the anchor and start looking on the right
+				while ( ( jj < pattern_size ) && ( index < text_size ) && ( text_string[index] == patterns[i][jj] ) )
+				{
+					index++; jj++;
+				}
+				if ( jj == pattern_size ) //we have matched the pattern completely
+				{ 
+					if ( index == text_size - 1 )	
+						pattern_output<< patterns[i] <<" found at position "<< index - pattern_size + 1 << " of the text"<<endl;					
+					else			
+						
+						pattern_output<< patterns[i] <<" found at position "<<  index - pattern_size << " of the text"<<endl;
+					hits++;
+				}
+			}
+			
+		}
+	
+   	}
+   	 	
+	for( INT i = 0; i < num_seqs; i ++ )
+        	free (patterns[i]);
+        free (patterns);
+        
+   	free( left_pattern );
+  	free( first_window );
+  	free( right_pattern );
+  	delete [] f ;
+  	
+   	return hits;
+ 	
+ }
