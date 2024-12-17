@@ -35,47 +35,6 @@
 #include <divsufsort.h>                                       	  // include header for suffix sort
 #endif
 
-double vm, vm0, rss, rss0;
-
-void process_mem_usage(double& vm_usage, double& resident_set)
-{
-    vm_usage     = 0.0;
-    resident_set = 0.0;
-
-    // the two fields we want
-    unsigned long vsize;
-    long rss;
-    {
-        std::string ignore;
-        std::ifstream ifs("/proc/self/stat", std::ios_base::in);
-        ifs >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore
-                >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore
-                >> ignore >> ignore >> vsize >> rss;
-    }
-
-    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
-    vm_usage = vsize / 1024.0;
-    resident_set = rss * page_size_kb;
-}
-
-
-
-/* Sorting comparison */
-bool sort_sa(const pair<INT,INT> &a,const pair<INT,INT> &b)
-{
-       return a.first<b.first;
-
-}
-
-
-//construct_index(
-
-
-
-
-
-//query(
-
 int main(int argc, char **argv)
 {
 	unordered_set<unsigned char> alphabet;

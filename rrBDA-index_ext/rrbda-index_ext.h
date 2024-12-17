@@ -38,6 +38,9 @@ using namespace std;
  
 INT bd_anchors( unsigned char * seq, INT pos, INT ell, uint64_t k, unordered_set<INT> &anchors, uint64_t * rank, uint64_t power );
 INT red_minlexrot( unsigned char * X, INT n, uint64_t r, uint64_t power );
+INT compute_anchors(char * arg1, unordered_set<INT> &text_anchors, INT text_size, INT block, INT ell, INT k, uint64_t power);
+INT compute_index( uint64_t hash, string index_name, INT text_size, INT g, unsigned char * text_string, unordered_set<INT> &text_anchors, INT * RSA, INT * RLCP, INT * LSA, INT * LLCP, rmq_succinct_sct<> &lrmq, rmq_succinct_sct<> &rrmq, char * arg0, char * arg1, INT ram_use );
+INT query(char * arg3, unsigned char * text_string, string output_filename, INT text_size, INT * LSA, INT * LLCP, INT * RSA, INT * RLCP, rmq_succinct_sct<> &lrmq, rmq_succinct_sct<> &rrmq, INT g, INT ell, INT power, INT k );
 pair<INT,INT> rev_pattern_matching ( unsigned char * w, unsigned char * a, INT * SA, INT * LCP, rmq_succinct_sct<> &rmq, INT n, INT w_size, INT a_size );
 pair<INT,INT> pattern_matching ( unsigned char * w, unsigned char * a, INT * SA, INT * LCP, rmq_succinct_sct<> &rmq, INT n, INT w_size, INT a_size );
 

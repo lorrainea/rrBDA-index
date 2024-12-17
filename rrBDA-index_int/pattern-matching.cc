@@ -639,4 +639,4 @@ INT query(char * arg3, unsigned char * text_string, string output_filename, INT 
   	
    	return hits;
  	
- }
+}

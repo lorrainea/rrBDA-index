@@ -8,7 +8,7 @@ LFLAGS= -std=c++17 -O3 -fconcepts -DNDEBUG -I ./libsdsl/include/ -I ./include/ -
 
 EXE=    rrbda-index_ext
  
-SRC=    rrbda-index_ext.cc rrbda.cc pattern-matching.cc krfp.cc utils.cc utils_krfp.cc
+SRC=    rrbda-index_ext.cc rrbda.cc index.cc pattern-matching.cc krfp.cc utils.cc utils_krfp.cc
 
 HD=     rrbda-index_ext.h Makefile.64-bit.gcc
  
