@@ -80,7 +80,7 @@ The plot below depicts the average pattern matching time of the indexes for grow
 Citation
 --------
 
-Lorraine A. K. Ayad, Grigorios Loukides, and Solon P. Pissis. 2024. Text indexing for long patterns using locally consistent anchors. [[arXiv]](https://arxiv.org/abs/2407.11819) (Under Review).
+Lorraine A. K. Ayad, Grigorios Loukides, and Solon P. Pissis. 2024. Text indexing for long patterns using locally consistent anchors. The VLDB Journal [[doi]]([https://arxiv.org/abs/2407.11819](https://doi.org/10.1007/s00778-025-00935-7)).
 
 License
 --------
